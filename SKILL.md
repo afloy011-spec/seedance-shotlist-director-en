@@ -1,6 +1,6 @@
 ---
 name: seedance-shotlist-director
-description: Generate a director's shotlist as an editable HTML production board for Seedance 2.0. Use whenever the user provides a script, scene breakdown, story idea, or treatment to turn into a numbered shotlist with English Seedance prompts — trigger on "make a shotlist", "director’s shotlist", "break this script into prompts", "generate prompts for Seedance", or any request to convert narrative content into shot-by-shot prompts. Also use to revise an existing shotlist HTML — re-render the same document (read its embedded Project Bible JSON to restore context). BOUNDARY — tuned for Seedance 2.0; if the user targets another video model (Veo, Kling, Runway, Sora…), keep the directing method but adapt the prompt container to that model's format instead of silently applying the Seedance one. Each prompt targets 15 seconds; longer scenes split under one scene number. Output: one editable HTML board with per-prompt statuses, an asset checklist, a repair guide, and CUT-separated shots.
+description: Generate a director's shotlist as an editable HTML production board for Seedance 2.0. Use whenever the user provides a script, scene breakdown, story idea, or treatment to turn into a numbered shotlist with English Seedance prompts — trigger on "make a shotlist", "director’s shotlist", "break this script into prompts", "generate prompts for Seedance", or any request to convert narrative content into shot-by-shot prompts. Also use to revise an existing shotlist HTML — re-render the same document (read its embedded Project Bible JSON to restore context). BOUNDARY — tuned for Seedance 2.0; if the user targets another video model (Veo, Kling, Runway, Sora…), keep the directing method but adapt the prompt container to that model's format instead of silently applying the Seedance one. Each prompt is up to 15 seconds with a recommended generation length so the user knows how long to make each clip; longer scenes split under one scene number. Output: one editable HTML board with per-prompt statuses, an asset checklist, a repair guide, and CUT-separated shots.
 ---
 
 # Seedance 2.0 Shotlist Director
@@ -24,7 +24,7 @@ This file holds the directing method and prompt rules. The rest is split out —
 
 ## What you're producing
 
-A single self-contained HTML file (`shotlist.html`, saved to the current working directory or a user-specified path): title + runtime summary, collapsed How-to-use, Asset Checklist, Style Prefix, Repair Guide, then numbered scenes. Each scene: one checkbox, a one-line description **in the user's language**, and one or more 15-second prompts as copy-ready blocks with a risk badge, a final-cut target, a status/keeper/notes row, click-to-edit text, and (for non-English users) a read-only translation mirror. A Project Bible JSON block at the end lets a future Claude session restore full context from the file alone. All saved state is namespaced by a project slug. The exact mechanics live in `board-spec.md` — follow it, don't improvise the container.
+A single self-contained HTML file (`shotlist.html`, saved to the current working directory or a user-specified path): title + runtime summary, collapsed How-to-use, Asset Checklist, Style Prefix, Repair Guide, then numbered scenes. Each scene: one checkbox, a one-line description **in the user's language**, and one or more prompts (each ≤15s) as copy-ready blocks with a risk badge, a generation length, a final-cut target, a status/keeper/notes row, click-to-edit text, and (for non-English users) a read-only translation mirror. A Project Bible JSON block at the end lets a future Claude session restore full context from the file alone. All saved state is namespaced by a project slug. The exact mechanics live in `board-spec.md` — follow it, don't improvise the container.
 
 ## Assets and @references (do this FIRST)
 
@@ -101,9 +101,9 @@ ENDS ON: [the exact final frame — body position, eye-line, motion state. This 
 SFX: [the scene's diegetic sound arc, start → finish]
 ```
 
-Each prompt **targets 15 seconds** of screen time. That's the goal — write enough cuts and acting beats to fill the full 15 seconds, because Seedance generates a fixed-length clip and you don't want dead air at the end. Most 15-second prompts hold 1–3 cuts depending on how much the cuts breathe. A long held single shot is a valid prompt if the moment carries it. A rapid-fire 4-cut sequence is also valid if the action calls for it. Either way: design the prompt so all 15 seconds are working.
+Each prompt fills **up to 15 seconds** of screen time. 15s is the maximum container, not a quota — a beat that only holds 6 seconds of action is a 6-second prompt, and you tell the user to generate it at 6s (see **Generation length** below). Whatever length you choose, design the prompt so all of it is working — no dead tail. Most prompts hold 1–3 cuts depending on how much the cuts breathe. A long held single shot is a valid prompt if the moment carries it. A rapid-fire 4-cut sequence is also valid if the action calls for it.
 
-If a scene is longer than 15 seconds (and most are), split it across multiple prompts under the same scene number: `3a`, `3b`, `3c`. Each one is its own 15-second block with its own full Style Prefix and Characters block. Continuity must hold across them — appearance, position, emotional state, props — and **each prompt's ENDS ON must be the next prompt's opening frame.**
+If a scene is longer than 15 seconds (and most are), split it across multiple prompts under the same scene number: `3a`, `3b`, `3c`. Each one is its own block (≤15s) with its own full Style Prefix and Characters block, and its own generation length. Continuity must hold across them — appearance, position, emotional state, props — and **each prompt's ENDS ON must be the next prompt's opening frame.**
 
 ### The handoff rule (clips must cut together)
 
@@ -113,9 +113,17 @@ Seedance generates each prompt independently — nothing forces clip 3a's last f
 - The next prompt's CUT 1 opens from exactly that state: same body position, same props in hand, same emotional register.
 - Between SCENES, design a match-cut when possible — a gesture, an object, a movement that bridges locations (a tap on the headphones, a door closing → another door opening). Note it in the scene description.
 
+### Generation length — what to set in the generator
+
+Tell the user how long to make each clip. Don't default every prompt to 15 seconds: generating 15s for a shot that only holds 6s of action burns credits on a tail they'll cut off anyway.
+
+The generation length falls straight out of your CUTs — it's the **end timecode of the last CUT**. Write your CUTs with explicit timecodes (`CUT 1 (0:00–0:06)`, `CUT 2 (0:06–0:11)`…); the last one's end IS the length to generate. A single held reaction or an insert might be 4–6s; a three-cut sequence might genuinely fill 15s. Round **up** to the nearest length the generator actually offers (Seedance and most tools expose a fixed menu — commonly 4 / 6 / 8 / 10 / 12 / 15s; use whatever yours lists) so every CUT fits with a small handle for the edit.
+
+Surface it in the prompt label as `gen {G}s`, and when a scene splits into `3a`/`3b`/`3c` each split gets its own length — a 40-second scene isn't 3×15s if two of its beats are 6-second inserts.
+
 ### Final-cut targets
 
-Users don't use all 15 seconds — they cut keeper seconds into the final edit. For each prompt, estimate how much survives into the final cut (typically 2–6s) and show it in the prompt label: `15s gen → ~3s final`. Sum these into the runtime summary at the top: "Target ad: ~30s · 6 prompts · 90s of generation". This tells the user their generation budget up front.
+Generation length is what you SET in the tool; final-cut seconds are what SURVIVE into the edit. They're different numbers — you generate a 6s clip and maybe 3s of it makes the cut. For each prompt, estimate the keeper (typically 2–6s) and show both in the prompt label: `gen 8s → ~3s final`. Sum the **generation** lengths into the runtime summary at the top: "Target ad: ~30s final · 6 prompts · 62s to generate". This tells the user their real credit budget up front, not 15×N.
 
 ### Risk badges
 
@@ -199,8 +207,8 @@ When the user gives you a script (or scene, or idea):
 1. **Read it as a director, not a transcriber.** Find the dramatic shape. Where does the scene turn? Where does it land? Where does it breathe?
 2. **Extract assets, assign @names, build the internal continuity table.** Who's in this? What do they look like? What states do they pass through (each state = an asset variant)? Read `references/asset-prompts.md` and write a generation prompt for every asset.
 3. **Block out scenes.** Number them 1, 2, 3… Each scene is one beat or location. Design the per-scene lighting and the match-cuts between scenes.
-4. **Decide prompt count per scene.** Each prompt is one 15-second beat. A 12-second moment still gets one full prompt — fill the 15 seconds with the breath, the look, the held silence after the line. A 40-second confession = 3 prompts (e.g., 5a, 5b, 5c). Honest assessment: how many 15-second beats does this moment actually need to land?
-5. **Read `references/cinematography.md` and `references/worked-examples.md`, then write each prompt** following the strict structure: Style CORE + Lighting, Characters (@refs), Scene + geo-spatial, CUTs (shot size + FOV in degrees), ENDS ON, SFX. Assign risk badge and final-cut target.
+4. **Decide prompt count per scene.** Each prompt is one beat of up to 15s. A 40-second confession = 3 prompts (e.g., 5a, 5b, 5c). Honest assessment: how many beats does this moment need, and how long is each one actually — a 6-second insert, a 15-second held take?
+5. **Read `references/cinematography.md` and `references/worked-examples.md`, then write each prompt** following the strict structure: Style CORE + Lighting, Characters (@refs), Scene + geo-spatial, CUTs with explicit timecodes (shot size + FOV in degrees), ENDS ON, SFX. Assign risk badge, generation length (last CUT's end timecode, rounded to the generator's menu), and final-cut target.
 6. **Read `references/board-spec.md` and `references/html-template.html`, then generate the HTML** — asset checklist, repair guide, runtime summary, Project Bible JSON included.
 7. **Save to `shotlist.html`** in the current working directory (or a user-specified path).
 8. **Validate**: run `node scripts/validate.mjs shotlist.html` (paths relative to this skill's folder). Fix every FAIL and re-run until clean; if Node.js is unavailable, hand-check the blocking criteria in `tests/golden-scenarios.md`.
@@ -220,7 +228,7 @@ This is critical: when the user asks you to change anything in the shotlist (rew
 ## Final reminders
 
 - **English prompts only.** Even if the user writes to you in Russian or another language, the prompt text in the HTML is always English (Seedance 2.0 expects English). Scene descriptions and UI notes — in the user's language.
-- **15 seconds is the target, not a ceiling to dodge under.** Write each prompt to fill 15 seconds — don't pad with empty static, but don't end early either. If the moment genuinely needs more, split across `3a`, `3b`, `3c`.
+- **15 seconds is the max container, not a quota.** Choose each prompt's generation length from its CUTs (a 6s insert generates at 6s, not 15s) and put `gen {G}s` in the label — don't pad to 15s and don't leave dead tail. If the moment genuinely needs more than 15s, split across `3a`, `3b`, `3c`.
 - **Every prompt ends with ENDS ON** — that's what makes the clips cut together.
 - **One scene = one checkbox**, even if split across multiple prompts.
 - **Assets first, high-risk first** — say it to the user when presenting the board.
