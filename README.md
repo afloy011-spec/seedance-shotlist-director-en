@@ -4,7 +4,7 @@ A Claude skill that turns a script (text, synopsis, a single scene) into a direc
 
 ![Production board: header with generation budget, Asset Checklist, Style Prefix, Repair Guide, and scenes with prompts](docs/board-screenshot.png)
 
-*The board UI renders in the user's language — the screenshot above comes from a Russian-language project, which is also why its prompts carry RU translation mirrors. For English users the board is English-only, no mirrors.*
+*The board UI renders in the user's language — English by default (shown above); non-English users additionally get read-only translation mirrors on every prompt.*
 
 ## How it works
 
