@@ -1,0 +1,25 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate-examples:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Validate improved example against blocking criteria
+        run: node scripts/validate.mjs examples/shotlist_improved.html
+      - name: Original Higgsfield example must FAIL (validator sanity check)
+        run: |
+          if node scripts/validate.mjs examples/shotlist_original.html; then
+            echo "::error::original example unexpectedly passed — validator lost its teeth"
+            exit 1
+          else
+            echo "original fails as expected"
+          fi

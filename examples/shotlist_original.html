@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AquaPulse — Director's Shotlist</title>
+<style>
+  :root {
+    --bg: #0e0e10;
+    --panel: #17171a;
+    --panel-2: #1d1d21;
+    --border: #2a2a30;
+    --text: #e8e8ea;
+    --text-dim: #9a9aa2;
+    --accent: #d4a259;
+    --done: #4ade80;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    line-height: 1.5;
+    padding: 32px 24px 80px;
+  }
+  .container { max-width: 980px; margin: 0 auto; }
+  h1 {
+    font-size: 28px; font-weight: 600; margin: 0 0 4px;
+    letter-spacing: -0.02em;
+  }
+  .subtitle { color: var(--text-dim); font-size: 14px; margin-bottom: 32px; }
+  .howto {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+  }
+  details.style-prefix {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 32px;
+  }
+  details.style-prefix summary {
+    cursor: pointer; font-weight: 600;
+    color: var(--accent); user-select: none;
+  }
+  details.style-prefix pre {
+    margin: 14px 0 0; padding: 14px;
+    background: var(--panel-2);
+    border-radius: 6px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    white-space: pre-wrap;
+    color: var(--text);
+  }
+  .scene {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+    margin-bottom: 18px;
+  }
+  .scene-header {
+    display: flex; align-items: flex-start; gap: 12px;
+    margin-bottom: 14px;
+  }
+  .scene-header input[type="checkbox"] {
+    width: 20px; height: 20px; margin-top: 2px;
+    accent-color: var(--done); cursor: pointer;
+    flex-shrink: 0;
+  }
+  .scene-num {
+    font-size: 18px; font-weight: 700;
+    color: var(--accent); min-width: 56px;
+  }
+  .scene-desc {
+    font-size: 15px; color: var(--text);
+    flex: 1;
+  }
+  .scene.done .scene-desc { text-decoration: line-through; color: var(--text-dim); }
+  .prompt-block {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-top: 12px;
+    overflow: hidden;
+  }
+  .prompt-label {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 14px;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+    font-size: 12px; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .copy-btn {
+    background: transparent; color: var(--accent);
+    border: 1px solid var(--border); border-radius: 4px;
+    padding: 4px 10px; font-size: 11px; cursor: pointer;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    font-family: inherit;
+  }
+  .copy-btn:hover { border-color: var(--accent); }
+  .copy-btn.copied { color: var(--done); border-color: var(--done); }
+  pre.prompt {
+    margin: 0; padding: 14px 16px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    white-space: pre-wrap;
+    color: var(--text);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>AquaPulse</h1>
+  <div class="subtitle">Director's Shotlist · Seedance 2.0</div>
+
+  <div class="howto">
+    Tick scenes as you finish them — your progress saves automatically.
+    Click the Copy button on any prompt to grab the full text (Style Prefix + Characters + Scene + Cuts).
+    Want changes? Tell Claude what to revise and the file updates.
+  </div>
+
+  <details class="style-prefix">
+    <summary>Global Style Prefix (applied to every prompt)</summary>
+    <pre>Style: 8K IMAX. Photorealistic — no 3D render, no game engine.
+Lighting: Natural light only — contre-jour backlight, camera on shadow side, atmospheric haze throughout. Key light from sky and windows only. No artificial lightning.
+Color: 60:30:10 — dominant / secondary / accent.
+Camera: Physical cine lens. 180° shutter motion blur.
+Skin: Pore-level realism — vellus hair, asymmetric moles, capillary flush, pore-shadow matching on-set light.
+Acting: Hollywood — micro-pauses before reactions, precise eye-line, living eyes with catch-lights, chest rise from breathing. Characters never standing, always reacting.
+Physics: Gravity and inertia respected — mass has real weight, correct contact shadows. No floating props.
+Composition: Rule of thirds + golden ratio. Every person moving from frame one.
+Continuity: Characters, props, environment identical across every cut. No identity drift.
+Technical: 24fps smooth motion. 8K detail. No jitter.
+Audio: Environmental SFX only. No music. No subtitles.</pre>
+  </details>
+
+  <div class="scene">
+    <div class="scene-header">
+      <input type="checkbox" data-scene="1">
+      <div class="scene-num">1.</div>
+      <div class="scene-desc">Marathon finish — exhausted runner crosses the line and grabs the AquaPulse bottle; the LED ring lights up.</div>
+    </div>
+
+    <div class="prompt-block">
+      <div class="prompt-label">
+        <span>Prompt 1a · 15s</span>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <pre class="prompt">Style: 8K IMAX. Photorealistic — no 3D render, no game engine.
+Lighting: Natural light only — contre-jour backlight, camera on shadow side, atmospheric haze throughout. Key light from sky and windows only. No artificial lightning.
+Color: 60:30:10 — dominant / secondary / accent.
+Camera: Physical cine lens. 180° shutter motion blur.
+Skin: Pore-level realism — vellus hair, asymmetric moles, capillary flush, pore-shadow matching on-set light.
+Acting: Hollywood — micro-pauses before reactions, precise eye-line, living eyes with catch-lights, chest rise from breathing. Characters never standing, always reacting.
+Physics: Gravity and inertia respected — mass has real weight, correct contact shadows. No floating props.
+Composition: Rule of thirds + golden ratio. Every person moving from frame one.
+Continuity: Characters, props, environment identical across every cut. No identity drift.
+Technical: 24fps smooth motion. 8K detail. No jitter.
+Audio: Environmental SFX only. No music. No subtitles.
+
+Characters:
+MARK — lean runner, mid 30s, short dark hair, salt-and-pepper stubble, skin sheened and dripping with sweat, cheeks flushed deep red, orange singlet darkened at the chest and back, race bib number 2117 crumpled at one corner. A matte-white smart water bottle with a thin LED ring at its base sits in a branded cooler stand just past the finish line.
+
+Scene:
+A city marathon finish straight, late morning. The finish arch stands behind him; a crowd leans over the barriers on both sides. The cooler stand with the white bottle is three steps past the line, right side. Mark crosses the line at a broken, exhausted stride.
+
+CUT 1 — Wide tracking from ahead of him, 35mm, dolly back matching his stride:
+Mark staggers across the finish line, arms dropping, stride breaking from run to walk. His chest heaves; he squints against the light, haze behind him. The crowd along the barriers claps and leans in. His eyes find the cooler stand — a beat of pure want.
+
+CUT 2 — Medium on the stand, 50mm, static:
+His hand enters frame and closes around the white bottle — fingers pressing into the matte surface, condensation smearing. As his palm seals the grip, the LED ring at the base wakes: a soft pulse of aqua light. A micro-pause — his thumb strokes the ring once, disbelief flickering to a tired half-smile.
+
+CUT 3 — Close-up profile, 85mm, slow push-in:
+He tips the bottle back and drinks — throat working in long swallows, a bead of water escaping down his chin and cutting a clean line through the sweat. Eyes close. Shoulders finally drop. He lowers the bottle and exhales through rounded lips, the LED ring still pulsing gently at the bottom of frame.</pre>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="scene-header">
+      <input type="checkbox" data-scene="2">
+      <div class="scene-num">2.</div>
+      <div class="scene-desc">Flashback — pre-dawn at the running club: coach Lena walks Mark through the pace plan; he fills the bottle.</div>
+    </div>
+
+    <div class="prompt-block">
+      <div class="prompt-label">
+        <span>Prompt 2a · 15s</span>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <pre class="prompt">Style: 8K IMAX. Photorealistic — no 3D render, no game engine.
+Lighting: Natural light only — contre-jour backlight, camera on shadow side, atmospheric haze throughout. Key light from sky and windows only. No artificial lightning.
+Color: 60:30:10 — dominant / secondary / accent.
+Camera: Physical cine lens. 180° shutter motion blur.
+Skin: Pore-level realism — vellus hair, asymmetric moles, capillary flush, pore-shadow matching on-set light.
+Acting: Hollywood — micro-pauses before reactions, precise eye-line, living eyes with catch-lights, chest rise from breathing. Characters never standing, always reacting.
+Physics: Gravity and inertia respected — mass has real weight, correct contact shadows. No floating props.
+Composition: Rule of thirds + golden ratio. Every person moving from frame one.
+Continuity: Characters, props, environment identical across every cut. No identity drift.
+Technical: 24fps smooth motion. 8K detail. No jitter.
+Audio: Environmental SFX only. No music. No subtitles.
+
+Characters:
+MARK — the same man, mid 30s, dry and rested, the same orange singlet, clean and bright, bib not yet pinned. The matte-white smart bottle with the LED ring stands open under the club water cooler.
+LENA — his older sister and coach, early 40s, weathered navy windbreaker with the club crest, stopwatch on a lanyard, tablet in one hand, reading glasses pushed up into her short grey-streaked hair.
+
+Scene:
+A running-club office before dawn, race day. A corkboard of route maps behind a scarred desk; one window going pale blue. Lena stands at the desk over her tablet, frame-left. Mark fills the white bottle at the cooler by the window, frame-right, six feet away.
+
+CUT 1 — Medium two-shot, 35mm, static:
+Water gurgles into the bottle. Lena doesn't look up from the tablet; she taps it twice with a knuckle. "Kilometer thirty is where it broke you last year." A beat. "We fixed it." Mark watches the water level rise, jaw working — the memory landing and being put away.
+
+CUT 2 — Close on hands and bottle, 50mm, slight overhead tilt:
+Mark caps the bottle and turns it once in his hand; the LED ring blinks awake — one calm aqua pulse. His thumb rests on the ring a beat longer than it needs to.
+
+CUT 3 — Singles, 85mm, over-the-shoulder pair:
+Mark looks up at Lena. A breath first — then, quiet and level: "Today I finish it." Lena finally looks up from the tablet, holds his gaze, and gives one slow, certain nod — the nod of someone who has already run the numbers. The smallest smile tugs at Mark's mouth as he slides the bottle into his belt.</pre>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="scene-header">
+      <input type="checkbox" data-scene="3">
+      <div class="scene-num">3.</div>
+      <div class="scene-desc">Back at the finish — Lena reaches Mark at the line, forehead to forehead; packshot.</div>
+    </div>
+
+    <div class="prompt-block">
+      <div class="prompt-label">
+        <span>Prompt 3a · 15s</span>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <pre class="prompt">Style: 8K IMAX. Photorealistic — no 3D render, no game engine.
+Lighting: Natural light only — contre-jour backlight, camera on shadow side, atmospheric haze throughout. Key light from sky and windows only. No artificial lightning.
+Color: 60:30:10 — dominant / secondary / accent.
+Camera: Physical cine lens. 180° shutter motion blur.
+Skin: Pore-level realism — vellus hair, asymmetric moles, capillary flush, pore-shadow matching on-set light.
+Acting: Hollywood — micro-pauses before reactions, precise eye-line, living eyes with catch-lights, chest rise from breathing. Characters never standing, always reacting.
+Physics: Gravity and inertia respected — mass has real weight, correct contact shadows. No floating props.
+Composition: Rule of thirds + golden ratio. Every person moving from frame one.
+Continuity: Characters, props, environment identical across every cut. No identity drift.
+Technical: 24fps smooth motion. 8K detail. No jitter.
+Audio: Environmental SFX only. No music. No subtitles.
+
+Characters:
+MARK — the same man, sweat-soaked, orange singlet darkened, bib 2117, holding the matte-white smart bottle, LED ring pulsing aqua.
+LENA — his coach, navy windbreaker, stopwatch swinging on its lanyard as she moves.
+
+Scene:
+The marathon finish straight, moments after scene 1. Mark stands just past the line, crowd at the barriers on both sides. Lena pushes through the official gap in the barrier, frame-left.
+
+CUT 1 — Tracking with Lena, 35mm, handheld urgency:
+Lena strides through the barrier gap, stopwatch swinging — she isn't running, she's arriving, certain. Mark sees her and his whole exhausted face opens. The crowd noise swells around them.
+
+CUT 2 — Medium two-shot, 50mm, slow push-in:
+She grips his shoulders, he grips the bottle, and they lean in — forehead to forehead, both laughing, breath ragged. She says something the crowd swallows; he nods against her forehead. The bottle rises between them, aqua ring pulsing.
+
+CUT 3 — Reverse wide from behind them, 24mm, static:
+Their two silhouettes against the haze and the arch — coach and runner, foreheads together, the bottle held between them, crowd leaning in from both edges of frame. A held, triumphant beat.</pre>
+    </div>
+
+    <div class="prompt-block">
+      <div class="prompt-label">
+        <span>Prompt 3b · 15s</span>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <pre class="prompt">Style: 8K IMAX. Photorealistic — no 3D render, no game engine.
+Lighting: Natural light only — contre-jour backlight, camera on shadow side, atmospheric haze throughout. Key light from sky and windows only. No artificial lightning.
+Color: 60:30:10 — dominant / secondary / accent.
+Camera: Physical cine lens. 180° shutter motion blur.
+Skin: Pore-level realism — vellus hair, asymmetric moles, capillary flush, pore-shadow matching on-set light.
+Acting: Hollywood — micro-pauses before reactions, precise eye-line, living eyes with catch-lights, chest rise from breathing. Characters never standing, always reacting.
+Physics: Gravity and inertia respected — mass has real weight, correct contact shadows. No floating props.
+Composition: Rule of thirds + golden ratio. Every person moving from frame one.
+Continuity: Characters, props, environment identical across every cut. No identity drift.
+Technical: 24fps smooth motion. 8K detail. No jitter.
+Audio: Environmental SFX only. No music. No subtitles.
+
+Characters:
+(no people — product only)
+The matte-white smart water bottle, thin aqua LED ring glowing steady at the base, fine condensation beading on the matte surface.
+
+Scene:
+Packshot. The bottle stands on a smoked-glass plinth against soft haze, backlit, a shallow pool of reflection under it.
+
+CUT 1 — Slow orbital, 50mm macro feel, 270 degrees around the bottle:
+Condensation beads slide slowly down the matte shell. The LED ring breathes — dim, bright, dim — its aqua glow catching the droplets. The orbit ends face-on to the etched logo as the ring settles to a steady glow.</pre>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Persist checkbox state in localStorage
+  document.querySelectorAll('.scene input[type="checkbox"]').forEach(cb => {
+    const key = 'shotlist-scene-' + cb.dataset.scene + '-done';
+    if (localStorage.getItem(key) === '1') {
+      cb.checked = true;
+      cb.closest('.scene').classList.add('done');
+    }
+    cb.addEventListener('change', () => {
+      localStorage.setItem(key, cb.checked ? '1' : '0');
+      cb.closest('.scene').classList.toggle('done', cb.checked);
+    });
+  });
+
+  // Copy buttons
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const pre = btn.closest('.prompt-block').querySelector('pre.prompt');
+      navigator.clipboard.writeText(pre.textContent).then(() => {
+        btn.classList.add('copied');
+        const original = btn.textContent;
+        btn.textContent = 'Copied';
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.textContent = original;
+        }, 1500);
+      });
+    });
+  });
+</script>
+</body>
+</html>

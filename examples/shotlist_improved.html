@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AquaPulse — Director's Shotlist</title>
+<style>
+  :root {
+    --bg: #0e0e10; --panel: #17171a; --panel-2: #1d1d21;
+    --border: #2a2a30; --text: #e8e8ea; --text-dim: #9a9aa2;
+    --accent: #d4a259; --done: #4ade80; --warn: #f59e0b; --risk: #ef4444;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    line-height: 1.5; padding: 32px 24px 80px; }
+  .container { max-width: 980px; margin: 0 auto; }
+  h1 { font-size: 28px; font-weight: 600; margin: 0 0 4px; letter-spacing: -0.02em; }
+  .subtitle { color: var(--text-dim); font-size: 14px; margin-bottom: 8px; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    flex-wrap: wrap; margin-bottom: 20px; }
+  .runtime { color: var(--accent); font-size: 13px; }
+  details.howto ul { margin: 12px 0 0; padding: 0; list-style: none; display: grid; gap: 7px;
+    font-size: 13px; color: var(--text-dim); }
+  details.howto li b { color: var(--text); font-weight: 600; }
+  .kbd-row { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 12px;
+    color: var(--text-dim); align-items: center; }
+  kbd { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 11px; color: var(--text);
+    background: var(--panel-2); border: 1px solid var(--border); border-bottom-width: 2px;
+    border-radius: 4px; padding: 1px 6px; }
+  details.top-block { background: var(--panel); border: 1px solid var(--border);
+    border-radius: 8px; padding: 14px 18px; margin-bottom: 16px; }
+  details.top-block summary { cursor: pointer; font-weight: 600; color: var(--accent); user-select: none; }
+  details.top-block pre, details.top-block .inner { margin: 14px 0 0; padding: 14px;
+    background: var(--panel-2); border-radius: 6px;
+    font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 12.5px;
+    white-space: pre-wrap; color: var(--text); }
+  details.top-block table { border-collapse: collapse; margin-top: 14px; font-size: 13px; width: 100%; }
+  details.top-block td, details.top-block th { border: 1px solid var(--border); padding: 8px 10px; text-align: left; vertical-align: top; }
+  .scene { background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+    padding: 20px 22px; margin-bottom: 18px; }
+  .scene-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+  .scene-header input[type="checkbox"] { width: 20px; height: 20px; margin-top: 2px;
+    accent-color: var(--done); cursor: pointer; flex-shrink: 0; }
+  .scene-num { font-size: 18px; font-weight: 700; color: var(--accent); min-width: 56px; }
+  .scene-desc { font-size: 15px; color: var(--text); flex: 1; }
+  .scene.done .scene-desc { text-decoration: line-through; color: var(--text-dim); }
+  .prompt-block { background: var(--panel-2); border: 1px solid var(--border);
+    border-radius: 6px; margin-top: 12px; overflow: hidden; }
+  .prompt-label { display: flex; justify-content: flex-start; align-items: center; gap: 10px;
+    padding: 8px 14px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border);
+    font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; flex-wrap: wrap; }
+  .prompt-actions { display: flex; gap: 8px; margin-left: auto; align-items: center; }
+  .badge { font-size: 11px; padding: 2px 8px; border-radius: 10px; border: 1px solid var(--border); }
+  .badge.risk-high { color: var(--risk); border-color: var(--risk); }
+  .badge.risk-mid { color: var(--warn); border-color: var(--warn); }
+  .badge.risk-low { color: var(--done); border-color: var(--done); }
+  .copy-btn { background: transparent; color: var(--accent); border: 1px solid var(--border);
+    border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;
+    text-transform: uppercase; letter-spacing: 0.05em; font-family: inherit; }
+  .copy-btn:hover { border-color: var(--accent); }
+  .copy-btn.copied { color: var(--done); border-color: var(--done); }
+  .copy-btn.failed { color: var(--risk); border-color: var(--risk); }
+  .tool-btn { background: transparent; color: var(--text-dim); border: 1px solid var(--border);
+    border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;
+    text-transform: uppercase; letter-spacing: 0.05em; font-family: inherit; }
+  .tool-btn:hover { border-color: var(--text-dim); color: var(--text); }
+  .tool-btn.active { color: var(--accent); border-color: var(--accent); }
+  .edited-badge { font-size: 10px; color: var(--warn); border: 1px solid var(--warn);
+    border-radius: 10px; padding: 1px 7px; }
+  button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-visible,
+  .scene-header input[type="checkbox"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  pre.prompt { margin: 0; padding: 14px 16px; font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12.5px; white-space: pre-wrap; color: var(--text); cursor: text; }
+  pre.prompt:hover { box-shadow: inset 0 0 0 1px var(--border); }
+  pre.prompt:focus { outline: 1px solid var(--accent); outline-offset: -1px; box-shadow: none; }
+  pre.prompt-mirror { margin: 0; padding: 14px 16px; font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12.5px; white-space: pre-wrap; color: var(--text-dim); }
+  .mirror-stale { padding: 8px 16px; font-size: 12px; color: var(--warn);
+    background: rgba(245,158,11,0.07); border-bottom: 1px solid var(--border); }
+  .prod-row { display: flex; gap: 10px; padding: 10px 14px; border-top: 1px solid var(--border);
+    align-items: center; flex-wrap: wrap; }
+  .prod-row select, .prod-row input { background: var(--panel); color: var(--text);
+    border: 1px solid var(--border); border-radius: 4px; padding: 5px 8px; font-size: 12.5px; font-family: inherit; }
+  .prod-row input.keeper { width: 130px; } .prod-row input.notes { flex: 1; min-width: 160px; }
+</style>
+</head>
+<body>
+<div class="container" data-slug="aquapulse">
+  <h1>AquaPulse</h1>
+  <div class="subtitle">Director's Shotlist · Seedance 2.0</div>
+  <div class="topbar">
+    <div class="runtime">Целевой ролик: ~25s · 4 промпта · 60s генерации · киперы: 8+6+6+5s</div>
+    <button class="tool-btn" id="export-edits" title="Скопировать все отредактированные промпты — вставь их в чат Claude, чтобы правки попали в файл и переводы обновились">Export edits</button>
+  </div>
+
+  <details class="top-block howto">
+    <summary>Как пользоваться</summary>
+    <ul>
+      <li><b>Порядок:</b> собери ассеты из чеклиста → генерируй high-risk промпты первыми.</li>
+      <li><b>Copy</b> — полный автономный промпт, всегда на английском.</li>
+      <li><b>Клик по тексту промпта</b> — редактирование. Правки живут только в этом браузере: чтобы внести их в файл и обновить перевод — <b>Export edits</b> → вставь в чат Claude.</li>
+      <li><b>RU</b> — перевод промпта, только для чтения.</li>
+      <li><b>Статусы, киперы, заметки</b> — сохраняются автоматически.</li>
+      <li><b>Не получилось?</b> Открой Repair Guide. Правки сцен — просто отдай этот файл Claude.</li>
+    </ul>
+    <div class="kbd-row">
+      <span><kbd>Ctrl</kbd>+<kbd>Z</kbd>/<kbd>Y</kbd> отмена · повтор</span>
+      <span><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd> копировать промпт</span>
+      <span><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>L</kbd> RU / EN</span>
+      <span><kbd>Esc</kbd> закончить редактирование</span>
+    </div>
+  </details>
+
+  <details class="top-block" open><summary>Asset Checklist — собери до генерации</summary>
+    <div class="inner">@mark — герой (сухой, свежий): локнутый фейс-клоузап + фулбоди в оранжевом синглете (Soul Cinema)
+@mark_wet — он же на финише: пот, глубокий румянец, потемневший синглет, скомканный номер 2117 — отдельный вариант, собрать один раз
+@lena — тренер, старшая сестра: синяя ветровка с гербом клуба, секундомер на шнурке, планшет, очки в седеющих волосах
+@bottle — продукт: матово-белая смарт-бутылка, LED-кольцо аква у основания — мультиракурсный продакт-шит (GPT Image)
+@club — офис бегового клуба: стол, корборд с картами маршрутов, окно, кулер — ¾-ракурс с глубиной
+@finish — финишная прямая: арка + барьеры с толпой, ¾-ракурс
+Layout map (сцены 1 и 3): линия финиша → 3 шага → стойка-кулер справа; барьеры с толпой по обе стороны; служебный проём в барьере слева</div>
+  </details>
+
+  <details class="top-block"><summary>Style Prefix (core — в каждом промпте)</summary>
+    <pre>Style: 8K IMAX. Photorealistic — no 3D render, no game engine.
+Color: 60:30:10 — dominant / secondary / accent.
+Camera: Physical cine lens. 180° shutter motion blur.
+Skin: Pore-level realism — vellus hair, asymmetric moles, capillary flush, pore-shadow matching on-set light.
+Acting: Hollywood — micro-pauses before reactions, precise eye-line, living eyes with catch-lights, chest rise from breathing. Characters never standing, always reacting.
+Physics: Gravity and inertia respected — mass has real weight, correct contact shadows. No floating props.
+Composition: Rule of thirds + golden ratio. Every person moving from frame one.
+Continuity: Characters, props, environment identical across every cut. No identity drift.
+Technical: 24fps smooth motion. 8K detail. No jitter.
+Audio: Diegetic dialogue and environmental SFX only. No music. No subtitles.
+
++ Lighting: своя строка в каждой сцене (см. промпты)</pre>
+  </details>
+
+  <details class="top-block"><summary>Repair Guide — генерация не удалась, что менять?</summary>
+    <table>
+      <tr><th>Симптом</th><th>Правка в промпте</th></tr>
+      <tr><td>Лицо/идентичность плывёт между катами</td><td>Усилить Character anchor (конкретнее черты), проверить @-референс, уменьшить число катов в этом промпте</td></tr>
+      <tr><td>Бутылка левитирует / телепортируется</td><td>Явная точка контакта («bottle IN his fist», «bottle ON the cooler stand»), упоминать её в каждом кате, где видна</td></tr>
+      <tr><td>Хореография превращается в кашу</td><td>Разбить движение по битам, одно действие на бит; один непрерывный кат вместо трёх</td></tr>
+      <tr><td>Пластиковая «AI-slop» кожа</td><td>Проверить, что Style CORE скопирован целиком (особенно строка Skin); добавить свет-на-коже в этой сцене</td></tr>
+      <tr><td>Мёртвая актёрка</td><td>Микро-биты: вдох, перевод взгляда, сглатывание перед репликой; что делает лицо ДО действия</td></tr>
+      <tr><td>Перепутана география / персонажи меняются местами</td><td>Заменить прозу layout map'ом; зафиксировать экранное направление («Lena frame-left, Mark frame-right — и так остаются»)</td></tr>
+      <tr><td>Клип не клеится со следующим</td><td>Сверить ENDS ON ↔ первый кадр следующего промпта; перегенерировать ПОЗДНИЙ клип, не кипер</td></tr>
+      <tr><td>Движение слишком быстрое / скомканное</td><td>Промпт перегружен — вынести кат в новый промпт (3b), дать остальным битам дышать</td></tr>
+    </table>
+    <div class="inner">Правило: меняй ОДНУ вещь за ретрай. Если ретрай меняет три переменные — успех ничему не учит.</div>
+  </details>
+
+  <div class="scene">
+    <div class="scene-header">
+      <input type="checkbox" data-scene="1">
+      <div class="scene-num">1.</div>
+      <div class="scene-desc">Финиш марафона — измотанный Марк пересекает черту и хватает бутылку; LED-кольцо просыпается. <em>Match-cut out: большой палец на LED-кольце → тот же жест в клубе.</em></div>
+    </div>
+
+    <div class="prompt-block">
+      <div class="prompt-label">
+        <span>Prompt 1a · 15s → ~8s final</span>
+        <span class="badge risk-high">high-risk — толпа у барьеров + взаимодействие с продуктом</span>
+        <span class="prompt-actions">
+          <span class="edited-badge" data-prompt-id="1a" hidden>edited</span>
+          <button class="tool-btn reset-btn" data-prompt-id="1a" hidden title="Вернуть исходный сгенерированный текст">Reset</button>
+          <button class="tool-btn lang-btn" title="Показать перевод (Ctrl+Shift+L)" aria-pressed="false">RU</button>
+          <button class="copy-btn" title="Скопировать промпт для Seedance (Ctrl+Shift+C)">Copy</button>
+        </span>
+      </div>
+      <pre class="prompt" lang="en" data-prompt-id="1a">Style: 8K IMAX. Photorealistic — no 3D render, no game engine.
+Color: 60:30:10 — dominant / secondary / accent.
+Camera: Physical cine lens. 180° shutter motion blur.
+Skin: Pore-level realism — vellus hair, asymmetric moles, capillary flush, pore-shadow matching on-set light.
+Acting: Hollywood — micro-pauses before reactions, precise eye-line, living eyes with catch-lights, chest rise from breathing. Characters never standing, always reacting.
+Physics: Gravity and inertia respected — mass has real weight, correct contact shadows. No floating props.
+Composition: Rule of thirds + golden ratio. Every person moving from frame one.
+Continuity: Characters, props, environment identical across every cut. No identity drift.
+Technical: 24fps smooth motion. 8K detail. No jitter.
+Audio: Diegetic dialogue and environmental SFX only. No music. No subtitles.
+Lighting: Natural light only — bright late-morning sun, high and slightly frontal, crisp shadows on the asphalt, light atmospheric haze down the finish straight. No contre-jour on his face.
+
+Characters:
+MARK (@mark_wet) — lean runner, mid 30s, short dark hair, salt-and-pepper stubble, skin sheened and dripping with sweat, cheeks flushed deep red, orange singlet darkened at the chest and back, race bib number 2117 crumpled at one corner.
+The matte-white smart bottle (@bottle — thin aqua LED ring at the base) waits in a branded cooler stand.
+
+Scene:
+A city marathon finish straight (@finish), late morning. Per the layout map: finish arch behind him, crowd leaning over barriers on BOTH sides and staying behind them, the cooler stand with @bottle three steps past the line on the RIGHT. Mark crosses the line at a broken, exhausted stride.
+
+CUT 1 — Wide tracking from ahead of him, 35mm, dolly back matching his stride:
+Mark (@mark_wet) staggers across the finish line, arms dropping, stride breaking from run to walk. His chest heaves; he squints against the light. The crowd claps and leans over the barriers — nobody crosses them. His eyes find the cooler stand right of frame — a beat of pure want.
+
+CUT 2 — Medium on the stand, 50mm, static:
+His hand closes around the white bottle (@bottle) — fingers pressing into the matte surface, condensation smearing, the bottle staying rooted in his grip. As his palm seals, the LED ring wakes: one soft aqua pulse. Micro-pause — his thumb strokes the ring once, disbelief flickering into a tired half-smile.
+
+CUT 3 — Close-up profile, 85mm, slow push-in:
+He tips the bottle back and drinks — throat working in long swallows, one bead of water cutting a clean line through the sweat on his chin. Eyes close. Shoulders finally drop. He lowers the bottle, exhales through rounded lips — and his thumb finds the LED ring again, resting on it.
+
+ENDS ON: close on his hand around the bottle, thumb resting on the glowing aqua ring, his exhausted half-smile soft in the background. (Scene 2 match-cuts from this exact thumb-on-ring gesture.)
+
+SFX: ragged breathing and slowing footfalls → crowd applause and barrier-board drumming at mid-distance → the seal-pop of the cap, long swallows, one deep exhale.</pre>
+      <div class="mirror-stale" data-prompt-id="1a" hidden>Промпт был отредактирован — перевод ниже соответствует исходной версии. Нажми Export edits и попроси Claude обновить файл.</div>
+      <pre class="prompt-mirror" hidden>Стиль: 8K IMAX. Фотореализм — без 3D-рендера, без игрового движка.
+Цвет: 60:30:10 — доминирующий / вторичный / акцентный.
+Камера: физическая кинооптика. Смаз движения при затворе 180°.
+Кожа: реализм уровня пор — пушковые волосы, асимметричные родинки, капиллярный румянец, тени пор согласованы со светом площадки.
+Актёрская игра: голливудская — микро-паузы перед реакциями, точный взгляд, живые глаза с бликами, грудь поднимается от дыхания. Персонажи никогда не стоят статично, всегда реагируют.
+Физика: гравитация и инерция соблюдены — масса имеет реальный вес, корректные контактные тени. Никаких парящих предметов.
+Композиция: правило третей + золотое сечение. Каждый человек в движении с первого кадра.
+Непрерывность: персонажи, реквизит, окружение идентичны в каждом кате. Без дрейфа идентичности.
+Техника: 24fps, плавное движение. Детализация 8K. Без джиттера.
+Звук: только диегетические диалоги и естественные шумы. Без музыки. Без субтитров.
+Свет: только естественный — яркое позднеутреннее солнце, высокое и слегка фронтальное, чёткие тени на асфальте, лёгкая дымка вдоль финишной прямой. Без контрового света на лице.
+
+Персонажи:
+МАРК (@mark_wet) — поджарый бегун, ~35, короткие тёмные волосы, щетина с проседью, кожа блестит и течёт потом, щёки в глубоком румянце, оранжевый синглет потемнел на груди и спине, номер 2117 смят на уголке.
+Матово-белая смарт-бутылка (@bottle — тонкое аква-LED-кольцо у основания) ждёт в брендированной стойке-кулере.
+
+Сцена:
+Финишная прямая городского марафона (@finish), позднее утро. По layout map: финишная арка позади него, толпа перегибается через барьеры с ОБЕИХ сторон и остаётся за ними, стойка с @bottle в трёх шагах за чертой СПРАВА. Марк пересекает черту сломанным, измотанным шагом.
+
+КАТ 1 — Широкий, трекинг спереди, 35mm, долли назад в темпе его шага:
+Марк (@mark_wet) вваливается за финишную черту, руки падают, бег ломается в шаг. Грудь ходит ходуном; он щурится от света. Толпа хлопает и перегибается через барьеры — никто их не пересекает. Его взгляд находит стойку справа в кадре — секунда чистого желания.
+
+КАТ 2 — Средний на стойке, 50mm, статика:
+Ладонь смыкается на белой бутылке (@bottle) — пальцы вдавливаются в матовую поверхность, конденсат смазывается, бутылка сидит в хвате как влитая. Едва ладонь замыкается, LED-кольцо просыпается: один мягкий аква-пульс. Микро-пауза — большой палец один раз проводит по кольцу, неверие перетекает в усталую полуулыбку.
+
+КАТ 3 — Крупный профиль, 85mm, медленный наезд:
+Он запрокидывает бутылку и пьёт — горло работает длинными глотками, одна капля прорезает чистую дорожку сквозь пот на подбородке. Глаза закрываются. Плечи наконец опускаются. Он опускает бутылку, выдыхает округлёнными губами — и большой палец снова находит LED-кольцо, замирая на нём.
+
+ЗАКАНЧИВАЕТСЯ НА: крупно — рука на бутылке, большой палец на светящемся аква-кольце, его измотанная полуулыбка мягко в фоне. (Сцена 2 открывается match-cut'ом с этого же жеста.)
+
+SFX: рваное дыхание и замедляющиеся шаги → аплодисменты и стук по щитам барьеров на средней дистанции → хлопок крышки, длинные глотки, один глубокий выдох.</pre>
+      <div class="prod-row">
+        <select data-prompt-field="status" data-prompt-id="1a">
+          <option value="">не начат</option><option value="gen">генерится</option>
+          <option value="retry">ретрай</option><option value="keeper">кипер</option>
+        </select>
+        <input class="keeper" data-prompt-field="keeper" data-prompt-id="1a" placeholder="keeper 0:04–0:09">
+        <input class="notes" data-prompt-field="notes" data-prompt-id="1a" placeholder="заметки…">
+      </div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="scene-header">
+      <input type="checkbox" data-scene="2">
+      <div class="scene-num">2.</div>
+      <div class="scene-desc">Флешбек — штаб бегового клуба перед рассветом: тренер Лена разбирает план темпа, Марк наполняет бутылку. <em>Match-cut in: большой палец на LED-кольце. Match-cut out: бутылка уходит в пояс → взлетает между ними на финише.</em></div>
+    </div>
+
+    <div class="prompt-block">
+      <div class="prompt-label">
+        <span>Prompt 2a · 15s → ~6s final</span>
+        <span class="badge risk-mid">tricky — два диалоговых бита + двухперсонажный блокинг</span>
+        <span class="prompt-actions">
+          <span class="edited-badge" data-prompt-id="2a" hidden>edited</span>
+          <button class="tool-btn reset-btn" data-prompt-id="2a" hidden title="Вернуть исходный сгенерированный текст">Reset</button>
+          <button class="tool-btn lang-btn" title="Показать перевод (Ctrl+Shift+L)" aria-pressed="false">RU</button>
+          <button class="copy-btn" title="Скопировать промпт для Seedance (Ctrl+Shift+C)">Copy</button>
+        </span>
+      </div>
+      <pre class="prompt" lang="en" data-prompt-id="2a">Style: 8K IMAX. Photorealistic — no 3D render, no game engine.
+Color: 60:30:10 — dominant / secondary / accent.
+Camera: Physical cine lens. 180° shutter motion blur.
+Skin: Pore-level realism — vellus hair, asymmetric moles, capillary flush, pore-shadow matching on-set light.
+Acting: Hollywood — micro-pauses before reactions, precise eye-line, living eyes with catch-lights, chest rise from breathing. Characters never standing, always reacting.
+Physics: Gravity and inertia respected — mass has real weight, correct contact shadows. No floating props.
+Composition: Rule of thirds + golden ratio. Every person moving from frame one.
+Continuity: Characters, props, environment identical across every cut. No identity drift.
+Technical: 24fps smooth motion. 8K detail. No jitter.
+Audio: Diegetic dialogue and environmental SFX only. No music. No subtitles.
+Lighting: Natural light only — pre-dawn blue through one window, a desk lamp OFF, the room lit by the paling sky alone, soft and cool, faint haze. No contre-jour, no rim backlight. No artificial lighting.
+
+Characters:
+MARK (@mark) — the same man, mid 30s, dry and rested, the same orange singlet — clean and bright, bib not yet pinned.
+LENA (@lena) — his older sister and coach, early 40s, weathered navy windbreaker with the club crest, stopwatch on a lanyard, tablet in one hand, reading glasses pushed up into short grey-streaked hair.
+The matte-white smart bottle (@bottle) stands open under the club water cooler.
+
+Scene:
+A running-club office (@club) before dawn, race day. Corkboard of route maps behind a scarred desk; one window going pale blue. Lena at the desk over her tablet, frame-left. Mark filling @bottle at the cooler by the window, frame-right, six feet away. They hold these sides for the whole scene.
+
+CUT 1 — Match-cut in: close on Mark's thumb settling onto the LED ring of the capped bottle — dry hand now, clean singlet — 50mm, slight overhead tilt:
+The ring blinks awake: one calm aqua pulse. His thumb rests on it a beat longer than it needs to. The cooler's last gurgle dies behind. Pull focus past his hand to Lena at the desk, out of focus, tapping her tablet.
+
+CUT 2 — Medium two-shot, 35mm, static:
+Lena (@lena) doesn't look up from the tablet; she taps it twice with a knuckle and says it dry, matter-of-fact, no drama: "Kilometer thirty is where it broke you last year." A beat. Her eyes stay on the split chart. "We fixed it." Mark watches her, jaw working — the memory landing and being put away.
+
+CUT 3 — Singles, 85mm, over-the-shoulder pair:
+Mark takes a breath first — then, quiet and level, no bravado, just fact: "Today I finish it." Lena finally looks up, holds his gaze over the glasses line, and gives one slow, certain nod — the nod of someone who has already run the numbers. The smallest smile tugs at Mark's mouth as he slides @bottle into his belt.
+
+ENDS ON: medium on Mark, bottle secured at his hip, chin lifting toward the door; Lena frame-left already back in the split chart. (Scene 3 match-cuts to the bottle rising between them at the finish.)
+
+SFX: the cooler's gurgle dying out → pre-dawn quiet, a knuckle tapping glass twice, her line dry and close → his line, quieter; the soft click of the bottle into the belt clip.</pre>
+      <div class="mirror-stale" data-prompt-id="2a" hidden>Промпт был отредактирован — перевод ниже соответствует исходной версии. Нажми Export edits и попроси Claude обновить файл.</div>
+      <pre class="prompt-mirror" hidden>Стиль: 8K IMAX. Фотореализм — без 3D-рендера, без игрового движка.
+Цвет: 60:30:10 — доминирующий / вторичный / акцентный.
+Камера: физическая кинооптика. Смаз движения при затворе 180°.
+Кожа: реализм уровня пор — пушковые волосы, асимметричные родинки, капиллярный румянец, тени пор согласованы со светом площадки.
+Актёрская игра: голливудская — микро-паузы перед реакциями, точный взгляд, живые глаза с бликами, грудь поднимается от дыхания. Персонажи никогда не стоят статично, всегда реагируют.
+Физика: гравитация и инерция соблюдены — масса имеет реальный вес, корректные контактные тени. Никаких парящих предметов.
+Композиция: правило третей + золотое сечение. Каждый человек в движении с первого кадра.
+Непрерывность: персонажи, реквизит, окружение идентичны в каждом кате. Без дрейфа идентичности.
+Техника: 24fps, плавное движение. Детализация 8K. Без джиттера.
+Звук: только диегетические диалоги и естественные шумы. Без музыки. Без субтитров.
+Свет: только естественный — предрассветная синева через единственное окно, настольная лампа ВЫКЛЮЧЕНА, комнату освещает только светлеющее небо, мягко и холодно, лёгкая дымка. Без контрового, без римлайта. Без искусственного света.
+
+Персонажи:
+МАРК (@mark) — тот же мужчина, ~35, сухой и отдохнувший, тот же оранжевый синглет — чистый и яркий, номер ещё не приколот.
+ЛЕНА (@lena) — его старшая сестра и тренер, ~40, видавшая виды синяя ветровка с гербом клуба, секундомер на шнурке, планшет в руке, очки для чтения сдвинуты в короткие волосы с проседью.
+Матово-белая смарт-бутылка (@bottle) стоит открытой под кулером клуба.
+
+Сцена:
+Офис бегового клуба (@club) перед рассветом, день гонки. Корборд с картами маршрутов за исцарапанным столом; одно окно наливается бледно-синим. Лена за столом над планшетом, слева в кадре. Марк наполняет @bottle у кулера возле окна, справа в кадре, в шести футах. Эти стороны они держат всю сцену.
+
+КАТ 1 — Match-cut: крупно — большой палец Марка ложится на LED-кольцо закрытой бутылки — теперь сухая рука, чистый синглет — 50mm, лёгкий верхний ракурс:
+Кольцо мигает, просыпаясь: один спокойный аква-пульс. Палец лежит на нём на секунду дольше, чем нужно. Последнее бульканье кулера затихает позади. Перевод фокуса за его руку — на Лену за столом, вне фокуса, постукивающую по планшету.
+
+КАТ 2 — Средний двойной план, 35mm, статика:
+Лена (@lena) не поднимает глаз от планшета; дважды стучит по нему костяшкой и говорит сухо, по делу, без драмы: "Kilometer thirty is where it broke you last year." («Тридцатый километр — там ты сломался в прошлом году».) Пауза. Взгляд всё ещё в графике сплитов. "We fixed it." («Мы это починили».) Марк смотрит на неё, желваки ходят — воспоминание приземляется и убирается на место.
+
+КАТ 3 — Синглы, 85mm, пара через плечо:
+Марк сначала делает вдох — потом тихо и ровно, без бравады, как факт: "Today I finish it." («Сегодня я добегу».) Лена наконец поднимает взгляд, держит его поверх линии очков и коротко, уверенно кивает один раз — кивок человека, который уже всё просчитал. Уголок рта Марка чуть дёргается в улыбке, и он убирает @bottle в пояс.
+
+ЗАКАНЧИВАЕТСЯ НА: средний на Марке, бутылка закреплена на бедре, подбородок поднимается к двери; Лена слева в кадре уже вернулась в график. (Сцена 3 — match-cut на бутылку, взлетающую между ними на финише.)
+
+SFX: бульканье кулера затихает → предрассветная тишина, двойной стук костяшки по стеклу, её реплика сухо и близко → его реплика, тише; мягкий щелчок бутылки в клипсу пояса.</pre>
+      <div class="prod-row">
+        <select data-prompt-field="status" data-prompt-id="2a">
+          <option value="">не начат</option><option value="gen">генерится</option>
+          <option value="retry">ретрай</option><option value="keeper">кипер</option>
+        </select>
+        <input class="keeper" data-prompt-field="keeper" data-prompt-id="2a" placeholder="keeper 0:04–0:09">
+        <input class="notes" data-prompt-field="notes" data-prompt-id="2a" placeholder="заметки…">
+      </div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="scene-header">
+      <input type="checkbox" data-scene="3">
+      <div class="scene-num">3.</div>
+      <div class="scene-desc">Снова финиш — Лена проходит к Марку через проём в барьере, лоб ко лбу, бутылка между ними; затем пэкшот. <em>Match-cut in: бутылка взлетает между ними.</em></div>
+    </div>
+
+    <div class="prompt-block">
+      <div class="prompt-label">
+        <span>Prompt 3a · 15s → ~6s final</span>
+        <span class="badge risk-high">high-risk — толпа + контакт двух персонажей в кадре</span>
+        <span class="prompt-actions">
+          <span class="edited-badge" data-prompt-id="3a" hidden>edited</span>
+          <button class="tool-btn reset-btn" data-prompt-id="3a" hidden title="Вернуть исходный сгенерированный текст">Reset</button>
+          <button class="tool-btn lang-btn" title="Показать перевод (Ctrl+Shift+L)" aria-pressed="false">RU</button>
+          <button class="copy-btn" title="Скопировать промпт для Seedance (Ctrl+Shift+C)">Copy</button>
+        </span>
+      </div>
+      <pre class="prompt" lang="en" data-prompt-id="3a">Style: 8K IMAX. Photorealistic — no 3D render, no game engine.
+Color: 60:30:10 — dominant / secondary / accent.
+Camera: Physical cine lens. 180° shutter motion blur.
+Skin: Pore-level realism — vellus hair, asymmetric moles, capillary flush, pore-shadow matching on-set light.
+Acting: Hollywood — micro-pauses before reactions, precise eye-line, living eyes with catch-lights, chest rise from breathing. Characters never standing, always reacting.
+Physics: Gravity and inertia respected — mass has real weight, correct contact shadows. No floating props.
+Composition: Rule of thirds + golden ratio. Every person moving from frame one.
+Continuity: Characters, props, environment identical across every cut. No identity drift.
+Technical: 24fps smooth motion. 8K detail. No jitter.
+Audio: Diegetic dialogue and environmental SFX only. No music. No subtitles.
+Lighting: Natural light only — the same bright late-morning sun as scene 1, high and slightly frontal, crisp shadows, light haze down the straight. No contre-jour on faces.
+
+Characters:
+MARK (@mark_wet) — sweat-soaked, orange singlet darkened, bib 2117, the matte-white bottle (@bottle) in his right fist, aqua LED ring pulsing.
+LENA (@lena) — his coach, navy windbreaker, stopwatch swinging on its lanyard as she moves.
+
+Scene:
+The marathon finish straight (@finish), seconds after scene 1. Per the layout map: Mark just past the line, centered; crowd at the barriers on BOTH sides, staying behind them; Lena entering through the official gap in the barrier, frame-left.
+
+CUT 1 — Match-cut in: the bottle (@bottle) sweeps up through frame in Mark's fist — then the camera widens as Lena strides in from frame-left, 35mm, handheld urgency:
+She isn't running — she's arriving, certain, stopwatch swinging. Mark sees her and his whole exhausted face opens. The crowd noise swells around them.
+
+CUT 2 — Medium two-shot, 50mm, slow push-in:
+She grips his shoulders, he grips @bottle, and they lean in — forehead to forehead, both laughing, breath ragged. She says something the crowd swallows; he nods against her forehead. The bottle rises between them, aqua ring pulsing at the center of frame.
+
+CUT 3 — Reverse wide from behind them, 24mm, static:
+Their two silhouettes against the haze and the finish arch — coach and runner, foreheads together, @bottle held between them, crowd leaning in from both edges but never crossing the barriers. One held, triumphant beat.
+
+ENDS ON: wide from behind — the pair small against the arch, the bottle between them catching a glint of aqua LED. (The packshot opens on that glint.)
+
+SFX: crowd roar swelling from the first frame, barrier boards drumming → the slap of her hands on his shoulders, two ragged laughs close and low under the roar.</pre>
+      <div class="mirror-stale" data-prompt-id="3a" hidden>Промпт был отредактирован — перевод ниже соответствует исходной версии. Нажми Export edits и попроси Claude обновить файл.</div>
+      <pre class="prompt-mirror" hidden>Стиль: 8K IMAX. Фотореализм — без 3D-рендера, без игрового движка.
+Цвет: 60:30:10 — доминирующий / вторичный / акцентный.
+Камера: физическая кинооптика. Смаз движения при затворе 180°.
+Кожа: реализм уровня пор — пушковые волосы, асимметричные родинки, капиллярный румянец, тени пор согласованы со светом площадки.
+Актёрская игра: голливудская — микро-паузы перед реакциями, точный взгляд, живые глаза с бликами, грудь поднимается от дыхания. Персонажи никогда не стоят статично, всегда реагируют.
+Физика: гравитация и инерция соблюдены — масса имеет реальный вес, корректные контактные тени. Никаких парящих предметов.
+Композиция: правило третей + золотое сечение. Каждый человек в движении с первого кадра.
+Непрерывность: персонажи, реквизит, окружение идентичны в каждом кате. Без дрейфа идентичности.
+Техника: 24fps, плавное движение. Детализация 8K. Без джиттера.
+Звук: только диегетические диалоги и естественные шумы. Без музыки. Без субтитров.
+Свет: только естественный — то же яркое позднеутреннее солнце, что в сцене 1, высокое и слегка фронтальное, чёткие тени, лёгкая дымка вдоль прямой. Без контрового света на лицах.
+
+Персонажи:
+МАРК (@mark_wet) — насквозь мокрый от пота, оранжевый синглет потемнел, номер 2117, матово-белая бутылка (@bottle) в правом кулаке, аква-LED-кольцо пульсирует.
+ЛЕНА (@lena) — его тренер, синяя ветровка, секундомер раскачивается на шнурке на ходу.
+
+Сцена:
+Финишная прямая (@finish), через секунды после сцены 1. По layout map: Марк сразу за чертой, в центре; толпа за барьерами с обеих сторон, остаётся за ними; Лена входит через служебный проём в барьере, слева в кадре.
+
+КАТ 1 — Match-cut: бутылка (@bottle) взлетает через кадр в кулаке Марка — камера расширяется, и слева входит Лена, 35mm, хендхелд-срочность:
+Она не бежит — она прибывает, уверенно, секундомер раскачивается. Марк видит её, и всё его измотанное лицо раскрывается. Шум толпы нарастает вокруг.
+
+КАТ 2 — Средний двойной, 50mm, медленный наезд:
+Она берёт его за плечи, он сжимает @bottle, и они сближаются — лоб ко лбу, оба смеются, дыхание рваное. Она говорит что-то, что глотает толпа; он кивает, не отрывая лба. Бутылка поднимается между ними, аква-кольцо пульсирует в центре кадра.
+
+КАТ 3 — Обратный широкий из-за спин, 24mm, статика:
+Два их силуэта на фоне дымки и финишной арки — тренер и бегун, лоб ко лбу, @bottle между ними, толпа тянется с обоих краёв кадра, но не пересекает барьеры. Один долгий триумфальный бит.
+
+ЗАКАНЧИВАЕТСЯ НА: широкий из-за спин — пара маленькая на фоне арки, бутылка между ними ловит блик аква-LED. (Пэкшот открывается этим бликом.)
+
+SFX: рёв толпы с первого кадра, стук по щитам барьеров → шлепок её ладоней по его плечам, два рваных смеха близко и низко под рёвом.</pre>
+      <div class="prod-row">
+        <select data-prompt-field="status" data-prompt-id="3a">
+          <option value="">не начат</option><option value="gen">генерится</option>
+          <option value="retry">ретрай</option><option value="keeper">кипер</option>
+        </select>
+        <input class="keeper" data-prompt-field="keeper" data-prompt-id="3a" placeholder="keeper 0:04–0:09">
+        <input class="notes" data-prompt-field="notes" data-prompt-id="3a" placeholder="заметки…">
+      </div>
+    </div>
+
+    <div class="prompt-block">
+      <div class="prompt-label">
+        <span>Prompt 3b · 15s → ~5s final</span>
+        <span class="badge risk-low">safe — продукт, статика, без людей</span>
+        <span class="prompt-actions">
+          <span class="edited-badge" data-prompt-id="3b" hidden>edited</span>
+          <button class="tool-btn reset-btn" data-prompt-id="3b" hidden title="Вернуть исходный сгенерированный текст">Reset</button>
+          <button class="tool-btn lang-btn" title="Показать перевод (Ctrl+Shift+L)" aria-pressed="false">RU</button>
+          <button class="copy-btn" title="Скопировать промпт для Seedance (Ctrl+Shift+C)">Copy</button>
+        </span>
+      </div>
+      <pre class="prompt" lang="en" data-prompt-id="3b">Style: 8K IMAX. Photorealistic — no 3D render, no game engine.
+Color: 60:30:10 — dominant / secondary / accent.
+Camera: Physical cine lens. 180° shutter motion blur.
+Skin: Pore-level realism — vellus hair, asymmetric moles, capillary flush, pore-shadow matching on-set light.
+Acting: Hollywood — micro-pauses before reactions, precise eye-line, living eyes with catch-lights, chest rise from breathing. Characters never standing, always reacting.
+Physics: Gravity and inertia respected — mass has real weight, correct contact shadows. No floating props.
+Composition: Rule of thirds + golden ratio. Every person moving from frame one.
+Continuity: Characters, props, environment identical across every cut. No identity drift.
+Technical: 24fps smooth motion. 8K detail. No jitter.
+Audio: Diegetic dialogue and environmental SFX only. No music. No subtitles.
+Lighting: Natural light only — soft top-light through haze, gentle gradient background, a cool aqua kick from the LED ring itself as the only accent. No hard shadows.
+
+Characters:
+(no people — product only)
+The matte-white smart water bottle (@bottle), thin aqua LED ring glowing at the base, fine condensation beading on the matte shell.
+
+Scene:
+Packshot. @bottle stands on a smoked-glass plinth against soft haze, a shallow pool of reflection under it — the bottle planted, dead still, full weight on the glass.
+
+CUT 1 — Slow orbital, 50mm macro feel, 270 degrees around the bottle, one continuous move:
+It opens on a glint of aqua LED — the same glint that closed scene 3. Condensation beads slide slowly down the matte shell, each drop obeying gravity into the reflection pool. The LED ring breathes — dim, bright, dim — its glow catching the droplets. The orbit ends face-on to the etched logo as the ring settles to a steady glow and holds.
+
+ENDS ON: static face-on framing of the bottle, logo centered, LED ring in steady glow — the final frame of the ad.
+
+SFX: near-silence — a faint air-tone, the almost-subliminal tick of a condensation drop meeting glass.</pre>
+      <div class="mirror-stale" data-prompt-id="3b" hidden>Промпт был отредактирован — перевод ниже соответствует исходной версии. Нажми Export edits и попроси Claude обновить файл.</div>
+      <pre class="prompt-mirror" hidden>Стиль: 8K IMAX. Фотореализм — без 3D-рендера, без игрового движка.
+Цвет: 60:30:10 — доминирующий / вторичный / акцентный.
+Камера: физическая кинооптика. Смаз движения при затворе 180°.
+Кожа: реализм уровня пор — пушковые волосы, асимметричные родинки, капиллярный румянец, тени пор согласованы со светом площадки.
+Актёрская игра: голливудская — микро-паузы перед реакциями, точный взгляд, живые глаза с бликами, грудь поднимается от дыхания. Персонажи никогда не стоят статично, всегда реагируют.
+Физика: гравитация и инерция соблюдены — масса имеет реальный вес, корректные контактные тени. Никаких парящих предметов.
+Композиция: правило третей + золотое сечение. Каждый человек в движении с первого кадра.
+Непрерывность: персонажи, реквизит, окружение идентичны в каждом кате. Без дрейфа идентичности.
+Техника: 24fps, плавное движение. Детализация 8K. Без джиттера.
+Звук: только диегетические диалоги и естественные шумы. Без музыки. Без субтитров.
+Свет: только естественный — мягкий верхний свет сквозь дымку, плавный градиент фона, холодный аква-отсвет от самого LED-кольца как единственный акцент. Без жёстких теней.
+
+Персонажи:
+(без людей — только продукт)
+Матово-белая смарт-бутылка (@bottle), тонкое аква-LED-кольцо светится у основания, мелкий конденсат бисером на матовом корпусе.
+
+Сцена:
+Пэкшот. @bottle стоит на плинте из дымчатого стекла в мягкой дымке, неглубокая лужица отражения под ней — бутылка стоит намертво, всем весом на стекле.
+
+КАТ 1 — Медленный орбитальный, 50mm с макро-ощущением, 270° вокруг бутылки, одно непрерывное движение:
+Открывается бликом аква-LED — тем же, которым закончилась сцена 3. Капли конденсата медленно сползают по матовому корпусу, каждая подчиняясь гравитации, в лужицу отражения. LED-кольцо дышит — тускло, ярко, тускло — свечение ловит капли. Орбита заканчивается фронтально на гравированном логотипе, кольцо переходит в ровное свечение и держит его.
+
+ЗАКАНЧИВАЕТСЯ НА: статичный фронтальный кадр бутылки, логотип в центре, LED-кольцо в ровном свечении — финальный кадр ролика.
+
+SFX: почти тишина — тонкий воздушный тон, едва различимый тик капли конденсата о стекло.</pre>
+      <div class="prod-row">
+        <select data-prompt-field="status" data-prompt-id="3b">
+          <option value="">не начат</option><option value="gen">генерится</option>
+          <option value="retry">ретрай</option><option value="keeper">кипер</option>
+        </select>
+        <input class="keeper" data-prompt-field="keeper" data-prompt-id="3b" placeholder="keeper 0:04–0:09">
+        <input class="notes" data-prompt-field="notes" data-prompt-id="3b" placeholder="заметки…">
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="application/json" id="project-bible">
+{
+  "title": "AquaPulse",
+  "slug": "aquapulse",
+  "language": "ru",
+  "targetRuntime": "~25s final cut",
+  "generation": {"prompts": 4, "totalSeconds": 60, "keeperEstimate": "8+6+6+5s"},
+  "styleCore": "8K IMAX photorealistic; 60:30:10 color; physical cine lens, 180° shutter; pore-level skin; Hollywood acting; real physics; rule of thirds; continuity locked; 24fps; diegetic dialogue and environmental SFX only, no music, no subtitles",
+  "lightingByScene": {
+    "1": "bright late-morning sun, high slightly frontal, crisp shadows, light haze, no contre-jour",
+    "2": "pre-dawn blue through one window, room lit by paling sky alone, soft and cool, no rim backlight",
+    "3": "same sun as scene 1 (continuity)",
+    "3b-packshot": "soft top-light through haze, aqua LED kick as only accent"
+  },
+  "characters": {
+    "@mark": "lean runner, mid 30s, short dark hair, salt-and-pepper stubble, orange singlet (clean), dry and rested — morning state",
+    "@mark_wet": "same man post-race: sweat-sheened, deep flush, darkened singlet, crumpled bib 2117",
+    "@lena": "his older sister and coach, early 40s, navy club windbreaker, stopwatch lanyard, tablet, reading glasses in grey-streaked hair"
+  },
+  "assets": {
+    "@bottle": "matte-white smart bottle, thin aqua LED ring at base — multi-angle product sheet",
+    "@club": "running-club office: scarred desk, corkboard of route maps, window, water cooler — 3/4 reference",
+    "@finish": "marathon finish straight: arch + barriers with crowd, official gap frame-left, 3/4 reference",
+    "layoutMap": "finish line -> 3 steps -> cooler stand RIGHT; barriers with crowd both sides; official barrier gap LEFT"
+  },
+  "scenes": [
+    {"n": 1, "desc": "Finish: exhausted Mark grabs the bottle, LED wakes", "prompts": ["1a"], "risk": {"1a": "high — crowd + product interaction"}, "finalCut": {"1a": "~8s"}, "endsOn": {"1a": "close on hand, thumb on glowing ring"}, "matchCutOut": "thumb-on-ring -> club office"},
+    {"n": 2, "desc": "Flashback pre-dawn club office: coach Lena calls the pace plan, Mark fills the bottle", "prompts": ["2a"], "risk": {"2a": "tricky — two dialogue beats + two-person blocking"}, "finalCut": {"2a": "~6s"}, "endsOn": {"2a": "bottle at hip, chin lifting to door; Lena back in the chart"}, "dialogue": {"lena": "Kilometer thirty is where it broke you last year. We fixed it.", "mark": "Today I finish it."}, "matchCutOut": "bottle to belt -> bottle rising between them at finish"},
+    {"n": 3, "desc": "Finish celebration — coach and runner forehead to forehead + packshot", "prompts": ["3a", "3b"], "risk": {"3a": "high — crowd + two-person contact", "3b": "safe — product only"}, "finalCut": {"3a": "~6s", "3b": "~5s"}, "endsOn": {"3a": "wide from behind, LED glint between them", "3b": "static logo framing, steady glow — final frame"}}
+  ],
+  "continuityNotes": "Reverse chronology: scenes 1 and 3 are @mark_wet, scene 2 (flashback) is @mark dry with clean singlet and unpinned bib. Same singlet garment across all scenes. Lena identical in scenes 2 and 3 (windbreaker, stopwatch, tablet left behind in 3). Crowd never crosses barriers; Lena enters ONLY through the official gap. LED ring: pulse on grip, steady in packshot."
+}
+</script>
+
+<script>
+  const SLUG = document.querySelector('.container').dataset.slug;
+  const K = s => 'sd-' + SLUG + '-' + s;
+
+  // Scene checkboxes
+  document.querySelectorAll('.scene input[type="checkbox"]').forEach(cb => {
+    const key = K('scene-' + cb.dataset.scene + '-done');
+    if (localStorage.getItem(key) === '1') { cb.checked = true; cb.closest('.scene').classList.add('done'); }
+    cb.addEventListener('change', () => {
+      localStorage.setItem(key, cb.checked ? '1' : '0');
+      cb.closest('.scene').classList.toggle('done', cb.checked);
+    });
+  });
+
+  // Per-prompt production state (status select, keeper, notes)
+  document.querySelectorAll('[data-prompt-field]').forEach(el => {
+    const key = K('p-' + el.dataset.promptId + '-' + el.dataset.promptField);
+    const saved = localStorage.getItem(key);
+    if (saved !== null) el.value = saved;
+    el.addEventListener('change', () => localStorage.setItem(key, el.value));
+    if (el.tagName === 'INPUT') el.addEventListener('input', () => localStorage.setItem(key, el.value));
+  });
+
+  // Copy buttons with fallback
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const text = btn.closest('.prompt-block').querySelector('pre.prompt').textContent;
+      const ok = () => { btn.classList.add('copied'); const o = btn.textContent; btn.textContent = 'Copied';
+        setTimeout(() => { btn.classList.remove('copied'); btn.textContent = o; }, 1500); };
+      const fail = () => { btn.classList.add('failed'); const o = btn.textContent; btn.textContent = 'Select & Ctrl+C';
+        setTimeout(() => { btn.classList.remove('failed'); btn.textContent = o; }, 2500); };
+      const legacy = () => {
+        try { const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta);
+          ta.select(); document.execCommand('copy'); document.body.removeChild(ta); ok(); } catch(e) { fail(); }
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(ok).catch(legacy);
+      } else { legacy(); }
+    });
+  });
+
+  // Editable prompts: persist local edits, Reset restores the generated original.
+  // The translation mirror is generated for the ORIGINAL text — when a local edit
+  // exists and the mirror is visible, a stale-translation notice is shown.
+  const updateStale = block => {
+    const stale = block.querySelector('.mirror-stale');
+    const ru = block.querySelector('pre.prompt-mirror');
+    if (stale) stale.hidden = !(ru && !ru.hidden && block.dataset.edited === '1');
+  };
+  const originals = new Map();
+  document.querySelectorAll('pre.prompt').forEach(pre => {
+    const id = pre.dataset.promptId;
+    const block = pre.closest('.prompt-block');
+    originals.set(id, pre.textContent);
+    const key = K('p-' + id + '-edit');
+    const badge = document.querySelector('.edited-badge[data-prompt-id="' + id + '"]');
+    const resetBtn = document.querySelector('.reset-btn[data-prompt-id="' + id + '"]');
+    const mark = edited => {
+      if (badge) badge.hidden = !edited;
+      if (resetBtn) resetBtn.hidden = !edited;
+      block.dataset.edited = edited ? '1' : '';
+      updateStale(block);
+    };
+    const saved = localStorage.getItem(key);
+    if (saved !== null) { pre.textContent = saved; mark(true); } else mark(false);
+    try { pre.contentEditable = 'plaintext-only'; } catch(e) { pre.contentEditable = 'true'; }
+    // Force plain text on paste/drop — pasted HTML must never become DOM
+    pre.addEventListener('paste', e => {
+      e.preventDefault();
+      const t = (e.clipboardData || window.clipboardData).getData('text/plain');
+      document.execCommand('insertText', false, t);
+    });
+    pre.addEventListener('drop', e => e.preventDefault());
+    pre.addEventListener('input', () => { localStorage.setItem(key, pre.textContent); mark(true); });
+    if (resetBtn) resetBtn.addEventListener('click', () => {
+      pre.textContent = originals.get(id); localStorage.removeItem(key); mark(false);
+    });
+  });
+
+  // EN/RU mirror toggle (mirror is read-only; Copy ignores it)
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const block = btn.closest('.prompt-block');
+      const en = block.querySelector('pre.prompt');
+      const ru = block.querySelector('pre.prompt-mirror');
+      if (!ru) return;
+      const showRu = ru.hidden;
+      ru.hidden = !showRu; en.hidden = showRu;
+      btn.textContent = showRu ? 'EN' : 'RU';
+      btn.classList.toggle('active', showRu);
+      btn.setAttribute('aria-pressed', showRu ? 'true' : 'false');
+      updateStale(block);
+    });
+  });
+
+  // Export edits: copy all locally edited prompts as a paste-ready block for Claude
+  const exportBtn = document.getElementById('export-edits');
+  if (exportBtn) exportBtn.addEventListener('click', () => {
+    const parts = [];
+    document.querySelectorAll('pre.prompt').forEach(pre => {
+      const id = pre.dataset.promptId;
+      if (localStorage.getItem(K('p-' + id + '-edit')) !== null) {
+        parts.push('=== Prompt ' + id + ' (edited) ===\n' + pre.textContent);
+      }
+    });
+    const done = n => { const o = exportBtn.textContent; exportBtn.textContent = n;
+      setTimeout(() => { exportBtn.textContent = o; }, 2000); };
+    if (!parts.length) { done('Нет правок'); return; }
+    const payload = 'Мои ручные правки промптов — внеси их в shotlist.html и обнови переводы:\n\n' + parts.join('\n\n');
+    const write = navigator.clipboard && navigator.clipboard.writeText
+      ? navigator.clipboard.writeText(payload) : Promise.reject();
+    write.then(() => done('Скопировано: ' + parts.length)).catch(() => {
+      try { const ta = document.createElement('textarea'); ta.value = payload; document.body.appendChild(ta);
+        ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+        done('Скопировано: ' + parts.length); } catch(e) { done('Ошибка копирования'); }
+    });
+  });
+
+  // Keyboard shortcuts.
+  // Inside a prompt, native editing shortcuts work as usual: Ctrl+Z / Ctrl+Y (undo/redo), Ctrl+C/X/V, Ctrl+A.
+  // Board shortcuts target the prompt under the cursor or the one being edited:
+  //   Ctrl/Cmd+Shift+C — copy the full prompt · Ctrl/Cmd+Shift+L — toggle RU/EN · Esc — finish editing
+  const activeBlock = () => {
+    const el = document.activeElement;
+    const focused = el && el.closest ? el.closest('.prompt-block') : null;
+    return focused || document.querySelector('.prompt-block:hover');
+  };
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      const el = document.activeElement;
+      if (el && el.classList && el.classList.contains('prompt')) el.blur();
+      return;
+    }
+    if (!(e.ctrlKey || e.metaKey) || !e.shiftKey) return;
+    const k = e.key.toLowerCase();
+    if (k !== 'c' && k !== 'l') return;
+    const block = activeBlock();
+    if (!block) return;
+    e.preventDefault();
+    if (k === 'c') { const b = block.querySelector('.copy-btn'); if (b) b.click(); }
+    if (k === 'l') { const b = block.querySelector('.lang-btn'); if (b) b.click(); }
+  });
+</script>
+</body>
+</html>
