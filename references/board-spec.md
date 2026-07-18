@@ -85,7 +85,7 @@ Read this file together with `html-template.html` every time you generate or re-
 
   <div class="prompt-block">
     <div class="prompt-label">
-      <span>Prompt 3a · gen 8s → ~4s final</span>
+      <span>Prompt 3a · gen 8s</span>
       <span class="badge risk-mid">tricky — two-person blocking</span>
       <span class="prompt-actions">
         <span class="edited-badge" data-prompt-id="3a" hidden>edited</span>
@@ -113,7 +113,7 @@ Rules:
 
 - **One checkbox per scene**, even when split into 3a/3b/3c — `data-scene` is the scene number as a string. The user ticks scene 3 when all of 3a/3b/3c have keepers.
 - **Scene descriptions in the user's language**; all prompt text English. Note designed match-cuts in the scene description (`<em>`).
-- **Prompt label**: `Prompt {id} · gen {G}s → ~{n}s final` + risk badge, where `{G}` is the generation length to set in the tool (the last CUT's end timecode, rounded up to the generator's menu — see SKILL.md "Generation length") and `{n}` is the estimated final-cut keeper. Badge classes: `.risk-low` (safe) / `.risk-mid` (tricky) / `.risk-high` (high-risk) — colored text and border, **no emoji anywhere on the board**. State the risk reason in one clause inside the badge.
+- **Prompt label**: `Prompt {id} · gen {G}s` + risk badge, where `{G}` is the generation length to set in the tool (the last CUT's end timecode, rounded up to the generator's menu — see SKILL.md "Generation length"). The final-cut keeper estimate does NOT appear in the label — it lives in the bible (`finalCutSeconds`) and the runtime summary only. Badge classes: `.risk-low` (safe) / `.risk-mid` (tricky) / `.risk-high` (high-risk) — colored text and border, **no emoji anywhere on the board**. State the risk reason in one clause inside the badge.
 - **Escape `<`, `>`, `&`** in prompt text as HTML entities — the `<pre>` content must contain no raw markup.
 - **Per-prompt controls** all carry `data-prompt-id`; every prompt has exactly one status `<select>`, one `.keeper` input, one `.notes` input (`data-prompt-field` = `status` / `keeper` / `notes`).
 - **Language mirror**: when the user's language is not English, every prompt gets `<pre class="prompt-mirror" hidden>` with a faithful translation written at generation time (never machine-translated at runtime — the file stays offline). Dialogue lines stay English with a «…» translation in parentheses. The `.mirror-stale` notice div sits between prompt and mirror. If the user's language IS English, omit the mirror, the stale div, and the lang-btn.

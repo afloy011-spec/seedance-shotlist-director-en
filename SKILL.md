@@ -24,7 +24,7 @@ This file holds the directing method and prompt rules. The rest is split out —
 
 ## What you're producing
 
-A single self-contained HTML file (`shotlist.html`, saved to the current working directory or a user-specified path): title + runtime summary, collapsed How-to-use, Asset Checklist, Style Prefix, Repair Guide, then numbered scenes. Each scene: one checkbox, a one-line description **in the user's language**, and one or more prompts (each ≤15s) as copy-ready blocks with a risk badge, a generation length, a final-cut target, a status/keeper/notes row, click-to-edit text, and (for non-English users) a read-only translation mirror. A Project Bible JSON block at the end lets a future Claude session restore full context from the file alone. All saved state is namespaced by a project slug. The exact mechanics live in `board-spec.md` — follow it, don't improvise the container.
+A single self-contained HTML file (`shotlist.html`, saved to the current working directory or a user-specified path): title + runtime summary, collapsed How-to-use, Asset Checklist, Style Prefix, Repair Guide, then numbered scenes. Each scene: one checkbox, a one-line description **in the user's language**, and one or more prompts (each ≤15s) as copy-ready blocks with a risk badge, a generation length, a status/keeper/notes row, click-to-edit text, and (for non-English users) a read-only translation mirror. A Project Bible JSON block at the end lets a future Claude session restore full context from the file alone. All saved state is namespaced by a project slug. The exact mechanics live in `board-spec.md` — follow it, don't improvise the container.
 
 ## Assets and @references (do this FIRST)
 
@@ -123,7 +123,7 @@ Surface it in the prompt label as `gen {G}s`, and when a scene splits into `3a`/
 
 ### Final-cut targets
 
-Generation length is what you SET in the tool; final-cut seconds are what SURVIVE into the edit. They're different numbers — you generate a 6s clip and maybe 3s of it makes the cut. For each prompt, estimate the keeper (typically 2–6s) and show both in the prompt label: `gen 8s → ~3s final`. Sum the **generation** lengths into the runtime summary at the top: "Target ad: ~30s final · 6 prompts · 62s to generate". This tells the user their real credit budget up front, not 15×N.
+Generation length is what you SET in the tool; final-cut seconds are what SURVIVE into the edit. Keep the prompt label clean — it shows ONLY the length to set: `gen 8s`. The keeper estimate (typically 2–6s) varies too much run to run to promise per prompt in the UI, so it stays out of the label: record it in the Project Bible (`finalCutSeconds`) and let it feed the runtime summary at the top: "Target ad: ~30s final · 6 prompts · 62s to generate" — the film target and the real credit budget, not 15×N.
 
 ### Risk badges
 
