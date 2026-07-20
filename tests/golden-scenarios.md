@@ -50,7 +50,7 @@ Blocking (any FAIL rejects the change):
 - [ ] B6. `[auto]` localStorage keys namespaced by slug; Project Bible JSON parses, has required keys, matches DOM ids
 - [ ] B7. `[auto]` One checkbox per scene, status/keeper/notes controls per prompt id
 - [ ] B8. `[manual]` No abstract emotion without physical action ("she is sad" → fail); no unmotivated camera
-- [ ] B9. `[manual]` Dialogue lines quoted with delivery direction; audio spec permits diegetic dialogue
+- [ ] B9. `[manual]` Dialogue lines quoted with delivery direction; audio spec permits diegetic dialogue; lines read as human speech, not AI cadence (no balanced X-not-Y antithesis, no rule-of-three list, no staccato one-word sentences)
 - [ ] B10. `[manual]` G2 only: state machine correct in every prompt (wet where wet, dry where dry, no teleporting states)
 
 Scored (grade 1–10, target ≥8 each):
