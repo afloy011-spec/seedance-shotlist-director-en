@@ -116,9 +116,11 @@ for (const [id, re, name] of sections) {
   check(id, missing.length === 0, `every prompt has ${name}`,
     `${name} missing in prompt(s): ${missing.join(', ')}`);
 }
-const cyrillic = prompts.filter(p => /[Ѐ-ӿ]/.test(p.text)).map(p => p.id);
-check('B4-1', cyrillic.length === 0, 'prompts are English (no Cyrillic)',
-  `Cyrillic inside English prompt(s): ${cyrillic.join(', ')}`);
+// Quoted dialogue may be in the film's target language — strip quoted lines first
+const stripQuotes = t => t.replace(/"[^"\n]*"|«[^»\n]*»|“[^”\n]*”/g, '""');
+const cyrillic = prompts.filter(p => /[Ѐ-ӿ]/.test(stripQuotes(p.text))).map(p => p.id);
+check('B4-1', cyrillic.length === 0, 'prompts are English outside quoted dialogue (no Cyrillic)',
+  `Cyrillic outside quoted dialogue in prompt(s): ${cyrillic.join(', ')}`);
 const noRefs = prompts.filter(p => !/@[a-z][a-z0-9_]*/i.test(p.text)).map(p => p.id);
 check('B1-1', noRefs.length === 0, 'every prompt references @assets',
   `no @asset reference in prompt(s): ${noRefs.join(', ')}`);

@@ -24,7 +24,7 @@ This file holds the directing method and prompt rules. The rest is split out —
 
 ## What you're producing
 
-A single self-contained HTML file (`shotlist.html`, saved to the current working directory or a user-specified path): title + runtime summary, collapsed How-to-use, Asset Checklist, Style Prefix, Repair Guide, then numbered scenes. Each scene: one checkbox, a one-line description **in the user's language**, and one or more prompts (each ≤15s) as copy-ready blocks with a risk badge, a generation length, a status/keeper/notes row, click-to-edit text, and (for non-English users) a read-only translation mirror. A Project Bible JSON block at the end lets a future Claude session restore full context from the file alone. All saved state is namespaced by a project slug. The exact mechanics live in `board-spec.md` — follow it, don't improvise the container.
+A single self-contained HTML file (`shotlist_{slug}.html`, saved to the current working directory or a user-specified path): title + runtime summary, collapsed How-to-use, Creative brief, Continuity ledger, Asset Checklist, Style Prefix, Repair Guide, then numbered scenes. Each scene: one checkbox, a one-line description **in the user's language**, and one or more prompts (each ≤15s) as copy-ready blocks with a risk badge, a generation length, a director note (purpose · edit role · must survive), a status/keeper/notes/take-log row, click-to-edit text, and (for non-English users) a read-only translation mirror. A Project Bible JSON block at the end lets a future Claude session restore full context from the file alone. All saved state is namespaced by a project slug. The exact mechanics live in `board-spec.md` — follow it, don't improvise the container.
 
 ## Assets and @references (do this FIRST)
 
@@ -46,6 +46,8 @@ If the user has already uploaded asset images or given @names in the conversatio
 ## The Style Prefix — core + per-scene lighting
 
 **Always check the conversation first** — if the user uploaded or pasted a custom style prefix, use that exact one verbatim.
+
+Then check the LOOK of the user's reference assets before shipping the default CORE. "Photorealistic — no 3D render" is a default, not dogma: if the references are stylized (CGI-doll, anime, cel, mixed-media), rewrite the Style and Skin lines to lock THAT look — a photoreal contract on top of a stylized character makes the model fight its own reference.
 
 The prefix has two parts:
 
@@ -121,9 +123,11 @@ The generation length falls straight out of your CUTs — it's the **end timecod
 
 Surface it in the prompt label as `gen {G}s`, and when a scene splits into `3a`/`3b`/`3c` each split gets its own length — a 40-second scene isn't 3×15s if two of its beats are 6-second inserts.
 
+**Project-wide cap.** When the user's platform or plan restricts clip length ("rebuild the shotlist for 6-second generations"), re-split the WHOLE shotlist under that cap — by dramatic action, never mechanically every N seconds; at most 1–2 complex actions per short prompt; scene numbers stay, suffixes extend (`3a`/`3b`/`3c`); re-stitch every ENDS ON ↔ opening frame. The cap survives revisions — no prompt may exceed it afterwards. Record it in the bible: `clipLengthMode` ("auto" | "fixed"), `maxClipSeconds`, `allowedClipLengths`.
+
 ### Final-cut targets
 
-Generation length is what you SET in the tool; final-cut seconds are what SURVIVE into the edit. Keep the prompt label clean — it shows ONLY the length to set: `gen 8s`. The keeper estimate (typically 2–6s) varies too much run to run to promise per prompt in the UI, so it stays out of the label: record it in the Project Bible (`finalCutSeconds`) and let it feed the runtime summary at the top: "Target ad: ~30s final · 6 prompts · 62s to generate" — the film target and the real credit budget, not 15×N.
+Generation length is what you SET in the tool; final-cut seconds are what SURVIVE into the edit. Keep the prompt label clean — it shows ONLY the length to set: `gen 8s`. The keeper estimate (typically 2–6s) varies too much run to run to promise per prompt in the UI, so it stays out of the label: record it in the Project Bible (`finalCutSeconds`) and let it feed the runtime summary at the top: "Target ad: ~30s final · 6 prompts · 62s to generate" — the film target and the real credit budget, not 15×N. The generation total is planned footage — a workload figure, never a promise of cost, wall-clock time, or attempt count.
 
 ### Risk badges
 
@@ -134,6 +138,12 @@ Mark every prompt with a color-coded text badge (`.risk-low` green / `.risk-mid`
 - **high-risk** — crowds, complex choreography, text in frame, water/particles, fast camera + fast subject. 5–10+ attempts.
 
 State WHY in one clause. Advise the user to generate high-risk prompts first — if a high-risk shot won't land, cheaper to redesign the scene before the safe shots are already paid for.
+
+For every high-risk prompt add a one-line **Plan B** in its director note: the simplified safe alternative (calmer camera or action, same dramatic meaning) plus the insert that can bridge the seam (reaction, prop close-up, clean plate). Full alternative prompts — only if the user asks.
+
+### Director note and take log
+
+Between the label and the copy-block every prompt carries a three-field **director note** (user's language, never inside the `<pre>`): **purpose** — what the shot must communicate; **edit role** — its function in the cut; **must survive** — the one element a keeper cannot lose. Takes are judged against these fields, not against which render looks prettiest. The prod row adds a **take log** — one line per attempt: `result → the ONE change → keeper?`; the change-one-variable retry rule only teaches when the diff is written down. Mirror the note in the bible (`purpose` / `editRole` / `mustSurvive` per prompt).
 
 ### Composition (always)
 
@@ -165,9 +175,9 @@ Restraint by default. Big emotion only when the moment earns it. A whispered lin
 
 ### Dialogue
 
-Dialogue is diegetic and allowed. Write lines inside CUTs, quoted, with delivery direction — volume, pace, where the breath falls, what the face does before and after the line. Never leave a line undirected: "she says: 'leave'" is a transcript; "she says it flat, without turning around: 'Leave.' — then closes her eyes" is directing. No subtitles, no voice-over unless the user explicitly asks.
+Dialogue is diegetic and allowed. Write lines inside CUTs, quoted, with delivery direction — volume, pace, where the breath falls, what the face does before and after the line. Never leave a line undirected: "she says: 'leave'" is a transcript; "she says it flat, without turning around: 'Leave.' — then closes her eyes" is directing. No subtitles, no voice-over unless the user explicitly asks. Spoken language is a creative decision: the prompt stays English, but when the film's dialogue is in another language (the user asked, or the audience demands it), write ONLY the quoted lines in that language and keep every direction English — the validator exempts quoted dialogue from the English-only check.
 
-### Continuity (track this internally — never write it as a visible block)
+### Continuity (build the ledger, hold the rest internally)
 
 Before writing prompts for a multi-scene script, build yourself an internal state table: for each character — appearance, wardrobe, physical state, emotional carry — updated scene by scene. Then hold it as you write:
 
@@ -176,7 +186,7 @@ Before writing prompts for a multi-scene script, build yourself an internal stat
 - **Emotional carry**: how did the previous scene leave them? They walk into this one carrying that.
 - **Location continuity**: same set, same time of day, same weather unless we cut to a new location.
 
-These never become a separate visible block in the HTML (the machine-readable snapshot lives in the Project Bible JSON). They show up as concrete language inside the Characters and CUT lines.
+The compact form of this table becomes the board's **Continuity ledger** — a collapsed top-block, one row per scene: state in → state out · wardrobe & props (which hand) · screen direction · emotional carry — so the user can SEE before generating that keys never teleport between hands and a coat never dries on its own (machine copy: `scenes[].stateIn` / `stateOut` in the bible). Everything deeper stays internal and shows up as concrete language inside the Characters and CUT lines.
 
 ### Camera language
 
@@ -204,13 +214,13 @@ When the user gives an image that must be a prompt's exact first frame — a gen
 
 When the user gives you a script (or scene, or idea):
 
-1. **Read it as a director, not a transcriber.** Find the dramatic shape. Where does the scene turn? Where does it land? Where does it breathe?
+1. **Read it as a director, not a transcriber.** Find the dramatic shape. Where does the scene turn? Where does it land? Where does it breathe? Then write the **creative brief** — six lines: core idea (what the film is ABOUT, not just what happens), audience feeling after the last frame, emotional arc (state in → state out), one camera rule tied to the drama, an avoid-list (clichés, lighting, acting to stay away from), deliverable (aspect · dialogue language · target runtime). It renders as a collapsed block on the board and lands in the bible (`creativeBrief`). Don't block on it — confirm with the user only when the material's tone or interpretation is genuinely ambiguous.
 2. **Extract assets, assign @names, build the internal continuity table.** Who's in this? What do they look like? What states do they pass through (each state = an asset variant)? Read `references/asset-prompts.md` and write a generation prompt for every asset.
 3. **Block out scenes.** Number them 1, 2, 3… Each scene is one beat or location. Design the per-scene lighting and the match-cuts between scenes.
 4. **Decide prompt count per scene.** Each prompt is one beat of up to 15s. A 40-second confession = 3 prompts (e.g., 5a, 5b, 5c). Honest assessment: how many beats does this moment need, and how long is each one actually — a 6-second insert, a 15-second held take?
 5. **Read `references/cinematography.md` and `references/worked-examples.md`, then write each prompt** following the strict structure: Style CORE + Lighting, Characters (@refs), Scene + geo-spatial, CUTs with explicit timecodes (shot size + FOV in degrees), ENDS ON, SFX. Assign risk badge, generation length (last CUT's end timecode, rounded to the generator's menu), and final-cut target.
-6. **Read `references/board-spec.md` and `references/html-template.html`, then generate the HTML** — asset checklist, repair guide, runtime summary, Project Bible JSON included.
-7. **Save to `shotlist.html`** in the current working directory (or a user-specified path).
+6. **Read `references/board-spec.md` and `references/html-template.html`, then generate the HTML** — creative brief, continuity ledger, asset checklist, repair guide, runtime summary, Project Bible JSON included.
+7. **Save to `shotlist_{slug}.html`** in the current working directory (or a user-specified path).
 8. **Validate**: run `node scripts/validate.mjs shotlist.html` (paths relative to this skill's folder). Fix every FAIL and re-run until clean; if Node.js is unavailable, hand-check the blocking criteria in `tests/golden-scenarios.md`.
 9. **Present it.** Tell the user: build the checklist assets first, generate high-risk prompts first.
 
@@ -222,6 +232,7 @@ This is critical: when the user asks you to change anything in the shotlist (rew
 - Preserve scene numbering (don't renumber everything if they only changed one prompt); if a revision inserts a scene between existing ones, prefer suffix numbering (`2.5` or `2-bis`) over renumbering, so saved progress on scenes 3+ survives.
 - Preserve the Style Prefix unless they tell you to change it. Keep the project slug identical — that's what preserves the user's saved statuses, keepers, and notes in localStorage.
 - Touch only what the user asked and the minimum around it (re-stitch the ENDS ON handoffs at the seams) — regeneration costs the user money.
+- **Keeper-frame handoff.** When the user brings a keeper's actual final frame (a screenshot or export), register it as an asset (`@s{N}_end`) and rewrite ONLY the next prompt's opening: the first-frame lock block from `cinematography.md` above the Style CORE, trimming what the image now defines. Everything else stays untouched — text continuity becomes a real frame chain.
 - **Exported edits.** If the user pastes an "Export edits" block (`=== Prompt 1a (edited) === …`), those texts are the new source of truth: bake each one into its prompt in the HTML as the new original, regenerate that prompt's language mirror to match, keep everything else untouched, and tell the user their local edits are now permanent (Reset will now restore the new baked version).
 - Validate after every re-render, same as step 8.
 
@@ -229,8 +240,9 @@ This is critical: when the user asks you to change anything in the shotlist (rew
 
 - **English prompts only.** Even if the user writes to you in Russian or another language, the prompt text in the HTML is always English (Seedance 2.0 expects English). Scene descriptions and UI notes — in the user's language.
 - **15 seconds is the max container, not a quota.** Choose each prompt's generation length from its CUTs (a 6s insert generates at 6s, not 15s) and put `gen {G}s` in the label — don't pad to 15s and don't leave dead tail. If the moment genuinely needs more than 15s, split across `3a`, `3b`, `3c`.
+- **A project clip-length cap is law** — once `maxClipSeconds` is set, no prompt exceeds it, including after revisions.
 - **Every prompt ends with ENDS ON** — that's what makes the clips cut together.
 - **One scene = one checkbox**, even if split across multiple prompts.
 - **Assets first, high-risk first** — say it to the user when presenting the board.
-- **Continuity tracker, character anchors, pacing notes are not visible blocks** — they live in your head (and in the Project Bible JSON) and surface as concrete language inside the prompts.
+- **The continuity ledger is the only visible working note** — deeper tracking (anchors, pacing, beat maps) stays in your head and the Project Bible, surfacing as concrete language inside the prompts.
 - **When revising, update the file** — don't describe changes in chat; read the Project Bible, apply edits, keep the slug, validate, re-present the HTML.

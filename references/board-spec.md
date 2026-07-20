@@ -4,9 +4,11 @@ Read this file together with `html-template.html` every time you generate or re-
 
 ## Board structure (top to bottom)
 
-1. **Title bar** — project name + **runtime summary** (`{{RUNTIME_SUMMARY}}`): target final-cut length · prompt count · total generation seconds (the SUM of each prompt's `gen` length, not 15×N). Example: "Target ad: ~30s final · 6 prompts · 62s to generate". The **Export edits** button sits in the topbar right of the summary — never inside the help text.
+1. **Title bar** — project name + **runtime summary** (`{{RUNTIME_SUMMARY}}`): target final-cut length · prompt count · total generation seconds (the SUM of each prompt's `gen` length, not 15×N). Example: "Target ad: ~30s final · 6 prompts · 62s to generate" (planned generated footage — a workload figure, not a promise of cost, wall-clock time, or attempt count). The **Export edits** button sits in the topbar right of the summary — never inside the help text.
 2. **How to use** — a collapsed `<details class="top-block howto">`: a `<ul>` list (one topic per `<li>`, bold lead word) plus a `.kbd-row` of `<kbd>` chips. Never a wall of prose. Written in the user's language.
-3. **Asset Checklist** — `<details class="top-block" open>`: every asset to build in Higgsfield BEFORE generating. Each asset is an `.asset-item` block: a head row (@name in monospace accent + a one-line build note in the user's language + a Copy button) and a `<pre class="asset-prompt">` with the copy-ready English generation prompt (patterns in `asset-prompts.md`):
+3. **Creative brief** — `<details class="top-block">` (collapsed): the six brief lines from SKILL.md (core idea · audience feeling · emotional arc · camera rule · avoid · deliverable) as a short `<ul>` or two-column `<table>`, in the user's language. Machine copy in the bible (`creativeBrief`).
+4. **Continuity ledger** — `<details class="top-block">` (collapsed): a `<table>`, one row per scene — Scene · State in → out · Wardrobe / props (which hand) · Screen direction · Emotional carry. Uses the standard top-block table styles. Machine copy in the bible (`scenes[].stateIn` / `stateOut`).
+5. **Asset Checklist** — `<details class="top-block" open>`: every asset to build in Higgsfield BEFORE generating. Each asset is an `.asset-item` block: a head row (@name in monospace accent + a one-line build note in the user's language + a Copy button) and a `<pre class="asset-prompt">` with the copy-ready English generation prompt (patterns in `asset-prompts.md`):
 
    Single-prompt asset (locations, props, diagrams):
 
@@ -52,10 +54,10 @@ Read this file together with `html-template.html` every time you generate or re-
    ```
 
    Asset prompts are plain generation prompts — no Style CORE, no status row. They ARE first-class citizens of the editing machinery: `data-asset-id` (unique, kebab, no @), click-to-edit with Reset, a language mirror when the user's language isn't English, inclusion in Export edits (`=== Asset vera-sheet (edited) ===`). Identity anchors (the same mole, the same wardrobe) must match across a character's variants.
-4. **Style Prefix (core)** — collapsible `<pre>`.
-5. **Repair Guide** — collapsible symptom→fix table (content below).
-6. **Scene list** — pattern below.
-7. **Project Bible** — `<script type="application/json" id="project-bible">` at the end of `<body>` (schema below).
+6. **Style Prefix (core)** — collapsible `<pre>`.
+7. **Repair Guide** — collapsible symptom→fix table (content below).
+8. **Scene list** — pattern below.
+9. **Project Bible** — `<script type="application/json" id="project-bible">` at the end of `<body>` (schema below).
 
 ## Placeholders
 
@@ -65,7 +67,9 @@ Read this file together with `html-template.html` every time you generate or re-
 | `{{SLUG}}` | Short kebab slug from the title, e.g. `headphones-ad`. NEVER changes across revisions — it namespaces all saved state |
 | `{{USER_LANG}}` | `<html lang>` = the user's language code (`ru`, `en`, …) |
 | `{{RUNTIME_SUMMARY}}` | Runtime summary line (see above), arithmetically consistent with the prompt labels |
-| `{{ASSET_CHECKLIST_HTML}}` | `.asset-list` of `.asset-item` blocks: head note in the user's language, generation prompt in English (see Board structure item 3) |
+| `{{CREATIVE_BRIEF_HTML}}` | The creative-brief block content (user's language) |
+| `{{CONTINUITY_LEDGER_HTML}}` | The ledger `<table>` (user's language), one row per scene |
+| `{{ASSET_CHECKLIST_HTML}}` | `.asset-list` of `.asset-item` blocks: head note in the user's language, generation prompt in English (see Board structure item 5) |
 | `{{STYLE_PREFIX_TEXT}}` | The style CORE text (English) |
 | `{{REPAIR_GUIDE_HTML}}` | `<table>` with the symptom→fix rows below, translated to the user's language |
 | `{{SCENES_HTML}}` | Scene blocks (pattern below) |
@@ -94,6 +98,7 @@ Read this file together with `html-template.html` every time you generate or re-
         <button class="copy-btn" title="Copy the prompt for Seedance (Ctrl+Shift+C)">Copy</button>
       </span>
     </div>
+    <div class="director-note"><b>purpose:</b> … · <b>edit role:</b> … · <b>must survive:</b> … <span class="plan-b">[high-risk only] Plan B: safe alternative + covering insert</span></div>
     <pre class="prompt" lang="en" data-prompt-id="3a">[FULL PROMPT — Style CORE, Lighting, Characters (@refs), Scene, CUTs, ENDS ON, SFX]</pre>
     <div class="mirror-stale" data-prompt-id="3a" hidden>The prompt was edited — the translation below matches the original version. Press Export edits and ask Claude to update the file.</div>
     <pre class="prompt-mirror" hidden>[Full read-only mirror of the prompt in the user’s language; dialogue lines stay English with a translation in brackets]</pre>
@@ -104,6 +109,7 @@ Read this file together with `html-template.html` every time you generate or re-
       </select>
       <input class="keeper" data-prompt-field="keeper" data-prompt-id="3a" placeholder="keeper 0:04–0:09">
       <input class="notes" data-prompt-field="notes" data-prompt-id="3a" placeholder="notes…">
+      <textarea class="takes" data-prompt-field="takes" data-prompt-id="3a" placeholder="take log: result → the ONE change → keeper?"></textarea>
     </div>
   </div>
 </div>
@@ -114,8 +120,9 @@ Rules:
 - **One checkbox per scene**, even when split into 3a/3b/3c — `data-scene` is the scene number as a string. The user ticks scene 3 when all of 3a/3b/3c have keepers.
 - **Scene descriptions in the user's language**; all prompt text English. Note designed match-cuts in the scene description (`<em>`).
 - **Prompt label**: `Prompt {id} · gen {G}s` + risk badge, where `{G}` is the generation length to set in the tool (the last CUT's end timecode, rounded up to the generator's menu — see SKILL.md "Generation length"). The final-cut keeper estimate does NOT appear in the label — it lives in the bible (`finalCutSeconds`) and the runtime summary only. Badge classes: `.risk-low` (safe) / `.risk-mid` (tricky) / `.risk-high` (high-risk) — colored text and border, **no emoji anywhere on the board**. State the risk reason in one clause inside the badge.
+- **Director note** (`.director-note`, between the label and the copy-block): purpose · edit role · must survive, in the user's language; high-risk prompts append the Plan B clause. Never inside the `<pre>` — Copy must stay clean.
 - **Escape `<`, `>`, `&`** in prompt text as HTML entities — the `<pre>` content must contain no raw markup.
-- **Per-prompt controls** all carry `data-prompt-id`; every prompt has exactly one status `<select>`, one `.keeper` input, one `.notes` input (`data-prompt-field` = `status` / `keeper` / `notes`).
+- **Per-prompt controls** all carry `data-prompt-id`; every prompt has exactly one status `<select>`, one `.keeper` input, one `.notes` input, one `.takes` textarea (`data-prompt-field` = `status` / `keeper` / `notes` / `takes`).
 - **Language mirror**: when the user's language is not English, every prompt gets `<pre class="prompt-mirror" hidden>` with a faithful translation written at generation time (never machine-translated at runtime — the file stays offline). Dialogue lines stay English with a «…» translation in parentheses. The `.mirror-stale` notice div sits between prompt and mirror. If the user's language IS English, omit the mirror, the stale div, and the lang-btn.
 - **All per-prompt buttons** (edited badge, Reset, RU/EN, Copy) sit together in `.prompt-actions` — never scattered across the label row.
 - Every button has a `title` tooltip (with its shortcut where one exists).
@@ -130,6 +137,7 @@ Every key is prefixed `sd-{slug}-`:
 | `sd-{slug}-p-{promptId}-status` | status select value |
 | `sd-{slug}-p-{promptId}-keeper` | keeper timecode text |
 | `sd-{slug}-p-{promptId}-notes` | notes text |
+| `sd-{slug}-p-{promptId}-takes` | take log text |
 | `sd-{slug}-p-{promptId}-edit` | locally edited prompt text (absence = unedited) |
 | `sd-{slug}-a-{assetId}-edit` | locally edited asset generation prompt |
 
@@ -170,6 +178,8 @@ Embedded as `<script type="application/json" id="project-bible">`. Purpose: a fu
   "slug": "trailpro-solo",
   "language": "en",
   "targetRuntime": "~30s final · 12 prompts · 180s generation",
+  "creativeBrief": { "coreIdea": "...", "audienceFeeling": "...", "emotionalArc": "... → ...", "cameraRule": "...", "avoid": ["..."], "deliverable": "16:9 · EN dialogue · ~30s" },
+  "clipLengthMode": "auto", "maxClipSeconds": 15, "allowedClipLengths": [4, 6, 8, 10, 12, 15],
   "styleCore": "Style: 8K IMAX. ...",
   "characters": [
     { "ref": "@hero", "desc": "woman ~30, ...", "states": ["@hero_waistwet", "@hero_soaked", "@hero_dry2"],
@@ -188,8 +198,10 @@ Embedded as `<script type="application/json" id="project-bible">`. Purpose: a fu
       "desc": "Packing at home",
       "lighting": "Lighting: Natural light only — soft even morning daylight ...",
       "matchCutOut": "zip pull → zip pull of the tent",
+      "stateIn": "dry, pack half-full, calm", "stateOut": "dry, pack sealed, quiet resolve",
       "prompts": [
         { "id": "1a", "risk": "safe", "riskWhy": "single character, slow blocking",
+          "purpose": "establish her competence", "editRole": "opening beat", "mustSurvive": "the hand pressing the packed lid",
           "genSeconds": 8, "finalCutSeconds": 4,
           "endsOn": "her hand flat on the packed top compartment, eyes to the window" }
       ]
@@ -200,6 +212,7 @@ Embedded as `<script type="application/json" id="project-bible">`. Purpose: a fu
 }
 ```
 
+- `creativeBrief`, `clipLengthMode`/`maxClipSeconds`/`allowedClipLengths`, per-scene `stateIn`/`stateOut` and per-prompt `purpose`/`editRole`/`mustSurvive` are part of the contract — a future session restores the brief, the cap and the ledger from the file alone.
 - `genSeconds` per prompt = the generation length to set in the tool (last CUT's end timecode, rounded to the generator's menu, ≤15); `finalCutSeconds` = estimated keeper. The runtime summary's generation total is the sum of `genSeconds`, and each label's `gen {G}s` must equal that prompt's `genSeconds`.
 - `bpm` + per-prompt bar plans and shipped aspect-ratio `variants` are included when relevant (see `extras.md`).
 - Valid JSON, double-quoted keys, escape `</script>` as `<\/script>`.

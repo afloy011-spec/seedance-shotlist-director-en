@@ -2,7 +2,8 @@
 <!-- SKELETON — copy this file's CSS and JS VERBATIM into the generated shotlist.html.
      Fill only: {{PROJECT_TITLE}}, {{SLUG}}, {{USER_LANG}}, {{RUNTIME_SUMMARY}},
      {{ASSET_CHECKLIST_HTML}}, {{STYLE_PREFIX_TEXT}}, {{REPAIR_GUIDE_HTML}},
-     {{SCENES_HTML}}, {{PROJECT_BIBLE_JSON}}.
+     {{SCENES_HTML}}, {{PROJECT_BIBLE_JSON}},
+     {{CREATIVE_BRIEF_HTML}}, {{CONTINUITY_LEDGER_HTML}}.
      The scene/prompt block pattern for {{SCENES_HTML}} is in board-spec.md.
      Do not rewrite, "improve", or reformat the CSS/JS — the validator and the
      saved-state contract depend on the exact class names, keys, and handlers. -->
@@ -117,6 +118,12 @@
   .prod-row select, .prod-row input { background: var(--panel); color: var(--text);
     border: 1px solid var(--border); border-radius: 4px; padding: 5px 8px; font-size: 12.5px; font-family: inherit; }
   .prod-row input.keeper { width: 110px; } .prod-row input.notes { flex: 1; min-width: 160px; }
+  .prod-row textarea.takes { flex-basis: 100%; min-height: 34px; resize: vertical; background: var(--panel);
+    color: var(--text); border: 1px solid var(--border); border-radius: 4px; padding: 5px 8px;
+    font-size: 12.5px; font-family: inherit; }
+  .director-note { padding: 8px 14px 0; font-size: 12px; color: var(--text-dim); }
+  .director-note b { color: var(--text); font-weight: 600; }
+  .director-note .plan-b { color: var(--warn); }
 </style>
 </head>
 <body>
@@ -144,6 +151,14 @@
       <span><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>L</kbd> RU / EN</span>
       <span><kbd>Esc</kbd> finish editing</span>
     </div>
+  </details>
+
+  <details class="top-block"><summary>Creative brief</summary> <!-- summary in the user's language -->
+    <div class="inner">{{CREATIVE_BRIEF_HTML}}</div>
+  </details>
+
+  <details class="top-block"><summary>Continuity ledger</summary> <!-- summary in the user's language -->
+    {{CONTINUITY_LEDGER_HTML}}
   </details>
 
   <details class="top-block" open><summary>Asset Checklist — build these before generating</summary>
@@ -185,7 +200,7 @@
     const saved = localStorage.getItem(key);
     if (saved !== null) el.value = saved;
     el.addEventListener('change', () => localStorage.setItem(key, el.value));
-    if (el.tagName === 'INPUT') el.addEventListener('input', () => localStorage.setItem(key, el.value));
+    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.addEventListener('input', () => localStorage.setItem(key, el.value));
   });
 
   // Copy buttons with fallback — always copies the ENGLISH prompt, edits included.
