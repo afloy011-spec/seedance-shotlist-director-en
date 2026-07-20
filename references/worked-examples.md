@@ -29,7 +29,7 @@ Anna walks across the frame, left to right, toward the hallway. Her steps leave 
 CUT 3 — CU on Marco, 18° FOV, static, contre-jour from window behind him:
 Marco watches her go. A single slow blink. His jaw shifts once. He looks back down at the book but doesn't read — his eyes stay on the same spot. Off-screen, the bedroom door clicks shut.
 
-ENDS ON: Marco alone in frame, close-up, eyes locked on one unread line of the book, jaw set — the couch and rain-lit window behind him. (Scene 2 opens on this exact frame or on a match-cut from the bedroom door.)
+ENDS ON: Marco alone in frame, close-up, eyes locked on one unread line of the book, jaw set — the couch and rain-lit window behind him. (Scene 2 picks up this exact STATE from a new angle — or match-cuts from the bedroom door — never on the identical close-up framing.)
 
 SFX: rain against glass from frame one → the door's hinge, her wet footfalls on hardwood → the distant click of the bedroom door, then just the rain.
 ```
@@ -45,7 +45,7 @@ What you do — and don't do:
 1. Read the Project Bible from the existing HTML (characters, slug, style, statuses survive).
 2. Scene 1 becomes prompts `1a` + `1b`. **The scene number does not change**, the checkbox does not change, `data-scene="1"` stays — her saved progress is untouched.
 3. `1a` = the doorway alone, given full air: the door, the silhouette, the drip, his head-tilt — 15 seconds of standing still that now has room to work. It gets a **new ENDS ON**: "Anna mid-first-step from the door, eyes still down; Marco's eyes just lifting."
-4. `1b` opens from exactly that frame and carries the cross + his close-up. Its ENDS ON is the OLD 1a's ENDS ON — the handoff to scene 2 is preserved, so scene 2 needs no regeneration.
+4. `1b` picks up that exact state — but reframed (the doorway keeper ends on a wide; `1b` opens tighter, on the cross) — and carries his close-up. Its ENDS ON is the OLD 1a's ENDS ON — the handoff to scene 2 is preserved, so scene 2 needs no regeneration.
 5. Statuses: `1a` keeps the old prompt's saved status only if the user says the doorway keeper survives; otherwise both start "not started". Say which in chat, one line.
 6. Re-render the same file, same slug, and present it. Total diff: one scene touched, zero renumbering, zero collateral regeneration.
 

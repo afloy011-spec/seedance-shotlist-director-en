@@ -98,7 +98,7 @@ CUT 1 — [shot size, FOV in degrees, movement]:
 CUT 2 — [shot size, FOV in degrees, movement]:
 [Next beat. Same level of detail. Default transition between CUTs is a hard cut; name a transition (MATCH CUT, WHIP CUT, SMASH CUT…) only when it's not — vocabulary and timing rules in cinematography.md.]
 
-ENDS ON: [the exact final frame — body position, eye-line, motion state. This is the handoff: the next prompt's first frame must match it.]
+ENDS ON: [the exact final frame — body position, eye-line, motion state. This is the handoff: the next prompt continues this STATE but from a NEW shot size or angle (see the handoff rule), so the clips cut cleanly instead of jump-cutting.]
 
 SFX: [the scene's diegetic sound arc, start → finish]
 ```
@@ -112,8 +112,10 @@ If a scene is longer than 15 seconds (and most are), split it across multiple pr
 Seedance generates each prompt independently — nothing forces clip 3a's last frame to match 3b's first frame. You force it:
 
 - Every prompt ends with an explicit `ENDS ON:` line — frozen description of the final frame.
-- The next prompt's CUT 1 opens from exactly that state: same body position, same props in hand, same emotional register.
+- The next prompt's CUT 1 continues from exactly that STATE — same body position, same props in the same hand, same emotional register, same light — but from a **different shot size or angle**. Two adjacent clips framed identically (MCU ends, MCU opens, same axis) jump-cut on the edit; change the shot size by at least one step (MCU → CU, or → WS) or swing the angle ~30° so the seam is a clean, editable cut. Continuity is of state, not of framing — the actor matches, the camera moves.
 - Between SCENES, design a match-cut when possible — a gesture, an object, a movement that bridges locations (a tap on the headphones, a door closing → another door opening). Note it in the scene description.
+
+Two kinds of seam both obey this: a **match-on-action** (a reach, a turn, a sit) hides the cut precisely BECAUSE size or angle changes across the moving body; a **clean editorial cut** between beats is an openly different setup. Never hand off onto the identical framing. (The one exception is a deliberate keeper-frame / first-frame-lock continuation from `cinematography.md` — that is ONE unbroken take, so the next clip starts on the literally identical frame because there is no cut to hide.)
 
 ### Generation length — what to set in the generator
 

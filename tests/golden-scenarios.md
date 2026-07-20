@@ -43,7 +43,7 @@ The validator covers the mechanical half of the blocking criteria (marked `[auto
 Blocking (any FAIL rejects the change):
 
 - [ ] B1. `[auto]` Every character/prop/location referenced with @names; `[manual]` state variants have own @names
-- [ ] B2. `[auto]` Every prompt ends with ENDS ON + SFX; `[manual]` consecutive prompts actually chain (ENDS ON N == opening frame N+1)
+- [ ] B2. `[auto]` Every prompt ends with ENDS ON + SFX; `[manual]` consecutive prompts chain (ENDS ON N's STATE continues in opening N+1) AND the opening reframes to a different shot size/angle — not an identical-framing jump cut (unless it is a deliberate first-frame-lock single take)
 - [ ] B3. `[auto-warn]` No two scenes share one verbatim Lighting line; `[manual]` each line fits the scene's time-of-day/mood
 - [ ] B4. `[auto]` Prompts are English regardless of input language — quoted dialogue lines may be in the film's target language; `[manual]` scene descriptions in the user's language
 - [ ] B5. `[auto]` Copy-block is standalone (CORE + Lighting + Characters + Scene + CUTs + ENDS ON + SFX)

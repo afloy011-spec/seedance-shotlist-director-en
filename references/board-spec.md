@@ -163,7 +163,7 @@ Adapt the wording to the user's language, keep the mappings:
 | Plastic "AI-slop" skin / render look | Verify the full Style CORE copied (especially the Skin line); add scene-specific light-on-skin detail |
 | Flat, dead acting | Add micro-beats: a breath, an eye-line shift, a swallow before the line; specify what the face does BEFORE the action |
 | Wrong spatial layout / characters swap sides | Replace prose geography with a layout map reference; lock screen direction ("Anna frame-left, Marco frame-right, and they stay there") |
-| Clip doesn't cut with the next one | Check ENDS ON ↔ next prompt's opening frame; regenerate the LATER clip to match, not the keeper |
+| Clip doesn't cut with the next one | Check ENDS ON ↔ next prompt's opening frame; regenerate the LATER clip to match, not the keeper. If it JUMP-cuts, the two clips share the same shot size + angle — reframe the next clip's CUT 1 to a different size or a ~30° angle so the seam cuts cleanly |
 | Motion too fast / rushed | The prompt is overpacked — move a cut to a new prompt (3b), let the remaining beats breathe |
 
 One more rule for the user, stated in the guide: **change ONE thing per retry.** If a retry changes three variables, a success teaches nothing.
