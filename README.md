@@ -39,16 +39,20 @@ The core loads into context on every invocation; reference files load only at th
 - **Camera optics in FOV degrees** from an approved table (63° observational wide, 47° neutral, 18° close portrait…) — Seedance holds degrees more reliably than lens millimeters; extreme optics get a LENS LOCK / LENS CHECK protocol.
 - **Measurable language** — speed in km/h, fog in % + meters, white balance in Kelvin, scale in stacked human heights; constraints phrased as positive locks.
 - **@assets** — characters, locations, and props are referenced by names (`@hero`, `@hero_wet`, `@bottle`) matching Elements in Higgsfield; state variants (wet/dry/bloodied) are separate assets.
-- **ENDS ON** — every prompt ends with an exact final-frame description; the next prompt opens from it. Match-cuts are designed between scenes.
+- **ENDS ON** — every prompt ends with an exact final-frame description. The next prompt continues that STATE but **reframes** to a different shot size or angle, because two clips sharing one framing jump-cut and refuse to join in the edit. Match-cuts are designed between scenes.
 - **Dialogue** — lines are written inside CUTs with delivery direction; audio is diegetic only.
 - Prompts are always English (a Seedance requirement); scene descriptions and UI follow the user's language.
 
 ## The production board (HTML)
 
+- **Creative brief** — six lines of directing contract (what the film is actually about, the feeling it leaves, the emotional arc, one camera rule, an avoid-list, the deliverable), settled before any expensive detailing starts.
+- **Continuity ledger** — a visible per-scene table: state in and out, wardrobe and props with the hand that holds them, screen direction, emotional carry. You can see BEFORE generating that the keys never teleported between hands.
 - **Asset Checklist** — the first block: what to build in Higgsfield before generating, and HOW — every asset ships its own copy-ready generation prompt (character split-frame sheet, no-branding product sheet, ¾ location, silhouette-only UI screens, layout map as a diagram); patterns follow the Higgsfield Cinema Studio method (`references/asset-prompts.md`).
 - **Risk badges** — every prompt is marked safe / tricky / high-risk with a reason (crowd, choreography, on-screen text) and an attempt estimate; the advice is to generate high-risk prompts first.
-- **Budget** — a summary up top: target runtime, prompt count, generation seconds, keeper-seconds estimate per prompt (`15s gen → ~3s final`).
-- **Tracking** — per prompt: status (not started / generating / retry / keeper), keeper timecode, notes. Stored in localStorage namespaced by the project slug — two boards never collide, and state survives file regeneration.
+- **Generation length per prompt** — the label carries `gen {N}s`: how many seconds to set the generator to for that beat. 15s is a maximum container, not a quota, and a six-second beat does not need fifteen, which is credits you keep. A project-wide length cap is supported too, and the shotlist re-splits under it.
+- **Budget** — a summary up top: target runtime, prompt count and total planned generated footage (a workload figure, never a promise of cost or wall-clock time).
+- **Director note** — three lines per prompt: what the shot is for, its role in the cut, and the one thing a keeper cannot lose; risky prompts add a plan B. Takes get judged by function in the edit, not by which render looks prettier.
+- **Tracking and take log** — per prompt: status (not started / generating / retry / keeper), keeper timecode, notes, and an attempt log in the shape of "result → the ONE change → keeper?". Changing one variable per retry only teaches you something when the diff is written down. Stored in localStorage namespaced by the project slug — two boards never collide, and state survives file regeneration.
 - **Repair Guide** — a symptom → fix table for typical generation failures (face drift, floating props, choreography mush, clips that won't cut together).
 - **Project Bible** — a JSON block inside the HTML with a fixed schema: characters, assets, per-scene lighting, handoffs, statuses. A fresh Claude session restores full project context from the file alone; revisions need no retelling.
 - The file has zero external dependencies and works offline; clipboard with a fallback; HTML-escaped prompts.
@@ -59,7 +63,7 @@ The core loads into context on every invocation; reference files load only at th
 node scripts/validate.mjs shotlist.html
 ```
 
-Zero-dependency (Node ≥18). Checks ~50 points: Project Bible parsing and required keys, Bible ↔ DOM consistency (scenes, prompt ids), localStorage namespacing, completeness of every prompt (CORE, Lighting, Characters, Scene, CUT 1, ENDS ON, SFX), English-only prompts, @references, escaping, status/keeper/notes controls, risk badges, translation mirrors, FOV-degrees (warns on lens-mm), no emoji, no external resources. Exit 1 on any FAIL; duplicated Lighting lines across scenes are a warning. The skill must run the validator after every generation and revision.
+Zero-dependency (Node ≥18). Checks ~50 points: Project Bible parsing and required keys, Bible ↔ DOM consistency (scenes, prompt ids), localStorage namespacing, completeness of every prompt (CORE, Lighting, Characters, Scene, CUT 1, ENDS ON, SFX), English-only prompts, @references, escaping, status/keeper/notes controls, risk badges, translation mirrors, no emoji, no external resources; it warns when lens millimeters slip into a video prompt instead of FOV degrees. Quoted dialogue is exempt from the English-only check, so lines may be in the film's own language. Exit 1 on any FAIL; duplicated Lighting lines across scenes are a warning. The skill must run the validator after every generation and revision.
 
 ## Extras
 

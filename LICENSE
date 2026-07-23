@@ -19,10 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-Origin note: the first commit of this repository reproduces the original
-"seedance-shotlist-director" skill published by Higgsfield AI in their
-Cinema Studio tutorial (https://www.youtube.com/watch?v=3rDs6FhFoUQ).
-All subsequent work is an independent extension of it.
